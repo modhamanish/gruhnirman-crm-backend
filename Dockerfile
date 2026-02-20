@@ -6,13 +6,14 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \
     zip \
     curl \
     unzip \
     git
 
 # PHP extensions (MySQL support ke liye)
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-install pdo_mysql pdo_pgsql pgsql mbstring exif pcntl bcmath gd
 
 # Apache rewrite module enable karein (Laravel routes ke liye zaroori hai)
 RUN a2enmod rewrite
