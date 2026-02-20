@@ -24,3 +24,8 @@ Route::get('cache-clear', function () {
 
     echo "Cache Clear successfully";
 });
+
+Route::get('/generate-swagger', function () {
+    Artisan::call('l5-swagger:generate');
+    return "Swagger generated successfully!";
+});
