@@ -22,6 +22,8 @@ class PropertyController extends Controller
             new OA\Parameter(name: "category_id", in: "query", required: false, schema: new OA\Schema(type: "integer")),
             new OA\Parameter(name: "property_type_id", in: "query", required: false, schema: new OA\Schema(type: "integer")),
             new OA\Parameter(name: "status", in: "query", required: false, schema: new OA\Schema(type: "string", enum: ["active", "inactive"])),
+            new OA\Parameter(name: "min_price", in: "query", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "max_price", in: "query", required: false, schema: new OA\Schema(type: "integer")),
             new OA\Parameter(name: "per_page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 10)),
             new OA\Parameter(name: "page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 1)),
         ],
@@ -39,6 +41,14 @@ class PropertyController extends Controller
                 $q->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('address', 'LIKE', "%{$search}%");
             });
+        }
+
+        if ($request->has('min_price')) {
+            $query->where('starting_price', '>=', $request->input('min_price'));
+        }
+
+        if ($request->has('max_price')) {
+            $query->where('ending_price', '<=', $request->input('max_price'));
         }
 
         if ($request->has('builder_id')) {
