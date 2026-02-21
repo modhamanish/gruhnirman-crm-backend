@@ -16,13 +16,43 @@ class BuilderController extends Controller
         summary: "Get all builders",
         tags: ["Builders"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "search", in: "query", required: false, schema: new OA\Schema(type: "string")),
+            new OA\Parameter(name: "status", in: "query", required: false, schema: new OA\Schema(type: "string", enum: ["active", "inactive"])),
+            new OA\Parameter(name: "per_page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 10)),
+            new OA\Parameter(name: "page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 1))
+        ],
         responses: [
             new OA\Response(response: 200, description: "Success")
         ]
     )]
-    public function index()
+    public function index(Request $request)
     {
-        $builders = Builder::orderBy('id', 'desc')->get();
+        $query = Builder::query();
+
+        // Search filter
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('company_name', 'LIKE', "%{$search}%")
+                    ->orWhere('name', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%")
+                    ->orWhere('contact_number', 'LIKE', "%{$search}%");
+            });
+        }
+
+        // Status filter
+        if ($request->has('status')) {
+            $query->where('status', $request->input('status'));
+        }
+        // Pagination
+        if (isset($request->per_page)) {
+            $perPage = $request->per_page;
+            $builders = $query->orderBy('id', 'desc')->paginate($perPage);
+        } else {
+            $builders = $query->orderBy('id', 'desc')->get();
+        }
+
         return response()->json([
             'status' => 'success',
             'data' => $builders
