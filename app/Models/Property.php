@@ -24,8 +24,20 @@ class Property extends Model
         'status',
     ];
 
+    protected $appends = ['image_url', 'brochure_url'];
+
     public function builder()
     {
         return $this->belongsTo(Builder::class);
+    }
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? asset('uploads/properties/' . $this->image) : '';
+    }
+
+    public function getBrochureUrlAttribute()
+    {
+        return $this->brochure ? asset('uploads/brochures/' . $this->brochure) : '';
     }
 }

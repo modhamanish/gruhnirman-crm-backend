@@ -995,12 +995,12 @@
                     }
                 ]
             },
-            "put": {
+            "post": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Update user",
-                "operationId": "070e37fc9aff78ae73860751bc990ed3",
+                "operationId": "6d6370298731666449ca1968f58a11f8",
                 "parameters": [
                     {
                         "name": "id",
@@ -1014,17 +1014,28 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "role"
+                                ],
                                 "properties": {
                                     "name": {
                                         "type": "string"
                                     },
-                                    "contact_number": {
-                                        "type": "string"
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
                                     },
-                                    "role": {
-                                        "type": "string"
+                                    "contact_number": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "nullable": true
                                     },
                                     "status": {
                                         "type": "string",
@@ -1032,6 +1043,14 @@
                                             "active",
                                             "inactive"
                                         ]
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "example": "Admin"
+                                    },
+                                    "profile_image": {
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"

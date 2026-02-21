@@ -77,6 +77,8 @@ class PropertyController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'brochure' => 'nullable|mimes:pdf,doc,docx|max:5120',
             'status' => 'required|in:active,inactive',
+        ], [
+            'builder_id.exists' => 'Builder not found'
         ]);
 
         if ($validator->fails()) {
@@ -84,23 +86,23 @@ class PropertyController extends Controller
         }
 
         $data = $request->all();
-        $propertyFolder = 'uploads/properties';
+        $propertyFolder = public_path('uploads/properties');
         if (!File::exists($propertyFolder)) {
             File::makeDirectory($propertyFolder, 0777, true);
         }
         if ($request->hasFile('image')) {
             $imageName = time() . '_property.' . $request->image->extension();
-            $request->image->move(public_path($propertyFolder), $imageName);
+            $request->image->move($propertyFolder, $imageName);
             $data['image'] = $imageName;
         }
 
-        $brochureFolder = 'uploads/brochures';
+        $brochureFolder = public_path('uploads/brochures');
         if (!File::exists($brochureFolder)) {
             File::makeDirectory($brochureFolder, 0777, true);
         }
         if ($request->hasFile('brochure')) {
             $brochureName = time() . '_brochure.' . $request->brochure->extension();
-            $request->brochure->move(public_path($brochureFolder), $brochureName);
+            $request->brochure->move($brochureFolder, $brochureName);
             $data['brochure'] = $brochureName;
         }
 
@@ -147,12 +149,22 @@ class PropertyController extends Controller
             content: new OA\MediaType(
                 mediaType: "multipart/form-data",
                 schema: new OA\Schema(
+                    required: ["builder_id", "name", "category", "type", "starting_price"],
                     properties: [
-                        new OA\Property(property: "_method", type: "string", example: "PUT"),
-                        new OA\Property(property: "name", type: "string"),
-                        new OA\Property(property: "starting_price", type: "number"),
-                        new OA\Property(property: "image", type: "string", format: "binary"),
-                        new OA\Property(property: "brochure", type: "string", format: "binary"),
+                        new OA\Property(property: "builder_id", type: "integer", example: 1),
+                        new OA\Property(property: "name", type: "string", example: "Sunrise Heights"),
+                        new OA\Property(property: "category", type: "string", example: "Residential"),
+                        new OA\Property(property: "type", type: "string", example: "Apartment"),
+                        new OA\Property(property: "sq_feet", type: "string", example: "1250 sqft"),
+                        new OA\Property(property: "starting_price", type: "number", format: "float", example: 4500000),
+                        new OA\Property(property: "ending_price", type: "number", format: "float", example: 6000000),
+                        new OA\Property(property: "image", type: "string", format: "binary", description: "Property Image"),
+                        new OA\Property(property: "address", type: "string", example: "123 Street, City"),
+                        new OA\Property(property: "latitude", type: "string", example: "22.3421061"),
+                        new OA\Property(property: "longitude", type: "string", example: "70.7299631"),
+                        new OA\Property(property: "youtube_link", type: "string", example: "https://youtu.be/..."),
+                        new OA\Property(property: "brochure", type: "string", format: "binary", description: "Property Brochure"),
+                        new OA\Property(property: "additional_note", type: "string", example: "Near Metro station"),
                         new OA\Property(property: "status", type: "string", enum: ["active", "inactive"]),
                     ]
                 )
@@ -166,12 +178,17 @@ class PropertyController extends Controller
     public function update(Request $request, Property $property)
     {
         $validator = Validator::make($request->all(), [
-            'builder_id' => 'sometimes|exists:builders,id',
-            'name' => 'sometimes|string|max:255',
-            'starting_price' => 'sometimes|numeric',
+            'builder_id' => 'required|exists:builders,id',
+            'name' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
+            'starting_price' => 'required|numeric',
+            'ending_price' => 'nullable|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'brochure' => 'nullable|mimes:pdf,doc,docx|max:5120',
-            'status' => 'sometimes|in:active,inactive',
+            'status' => 'required|in:active,inactive',
+        ], [
+            'builder_id.exists' => 'Builder not found',
         ]);
 
         if ($validator->fails()) {
@@ -179,31 +196,31 @@ class PropertyController extends Controller
         }
 
         $data = $request->all();
-        $propertyFolder = 'uploads/properties';
+        $propertyFolder = public_path('uploads/properties');
         if (!File::exists($propertyFolder)) {
             File::makeDirectory($propertyFolder, 0777, true, true);
         }
         if ($request->hasFile('image')) {
             $imageName = time() . '_property.' . $request->image->extension();
-            $request->image->move(public_path($propertyFolder), $imageName);
+            $request->image->move($propertyFolder, $imageName);
             $data['image'] = $imageName;
 
-            if ($property->image && file_exists(public_path($propertyFolder . '/' . $property->image))) {
-                @unlink(public_path($propertyFolder . '/' . $property->image));
+            if ($property->image && file_exists($propertyFolder . '/' . $property->image)) {
+                @unlink($propertyFolder . '/' . $property->image);
             }
         }
 
-        $brochureFolder = 'uploads/brochures';
+        $brochureFolder = public_path('uploads/brochures');
         if (!File::exists($brochureFolder)) {
             File::makeDirectory($brochureFolder, 0777, true, true);
         }
         if ($request->hasFile('brochure')) {
             $brochureName = time() . '_brochure.' . $request->brochure->extension();
-            $request->brochure->move(public_path($brochureFolder), $brochureName);
+            $request->brochure->move($brochureFolder, $brochureName);
             $data['brochure'] = $brochureName;
 
-            if ($property->brochure && file_exists(public_path($brochureFolder . '/' . $property->brochure))) {
-                @unlink(public_path($brochureFolder . '/' . $property->brochure));
+            if ($property->brochure && file_exists($brochureFolder . '/' . $property->brochure)) {
+                @unlink($brochureFolder . '/' . $property->brochure);
             }
         }
 

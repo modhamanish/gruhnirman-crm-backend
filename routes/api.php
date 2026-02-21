@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('users', [UserController::class, 'index'])->middleware('permission:user-list');
     Route::post('users', [UserController::class, 'store'])->middleware('permission:user-create');
     Route::get('users/{user}', [UserController::class, 'show'])->middleware('permission:user-list');
-    Route::put('users/{user}', [UserController::class, 'update'])->middleware('permission:user-edit');
+    Route::post('users/{user}', [UserController::class, 'update'])->middleware('permission:user-edit');
     Route::delete('users/{user}', [UserController::class, 'destroy'])->middleware('permission:user-delete');
 
     // Property Management

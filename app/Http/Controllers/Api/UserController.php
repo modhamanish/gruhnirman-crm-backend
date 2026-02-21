@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Spatie\Permission\Models\Role;
 use OpenApi\Attributes as OA;
 
@@ -66,11 +67,14 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
-            'contact_number' => 'nullable|string|max:20',
+            'contact_number' => 'nullable|string|max:10|min:10',
             'address' => 'nullable|string',
             'status' => 'required|in:active,inactive',
             'role' => 'required|exists:roles,name',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'contact_number.min' => 'Contact number must be 10 digits',
+            'contact_number.max' => 'Contact number must be 10 digits',
         ]);
 
         if ($validator->fails()) {
@@ -83,10 +87,15 @@ class UserController extends Controller
             $data = $request->all();
             $data['password'] = Hash::make($request->password);
 
+            $folderPath = public_path('uploads/users');
+            if (!File::exists($folderPath)) {
+                File::makeDirectory($folderPath, 0777, true, true);
+            }
+
             if ($request->hasFile('profile_image')) {
                 $imageName = time() . '.' . $request->profile_image->extension();
-                $request->profile_image->move(public_path('uploads/users'), $imageName);
-                $data['profile_image'] = 'uploads/users/' . $imageName;
+                $request->profile_image->move($folderPath, $imageName);
+                $data['profile_image'] = $imageName;
             }
 
             $user = User::create($data);
@@ -126,7 +135,7 @@ class UserController extends Controller
         ]);
     }
 
-    #[OA\Put(
+    #[OA\Post(
         path: "/api/users/{id}",
         summary: "Update user",
         tags: ["Users"],
@@ -136,13 +145,20 @@ class UserController extends Controller
         ],
         requestBody: new OA\RequestBody(
             required: true,
-            content: new OA\JsonContent(
-                properties: [
-                    new OA\Property(property: "name", type: "string"),
-                    new OA\Property(property: "contact_number", type: "string"),
-                    new OA\Property(property: "role", type: "string"),
-                    new OA\Property(property: "status", type: "string", enum: ["active", "inactive"]),
-                ]
+            content: new OA\MediaType(
+                mediaType: "multipart/form-data",
+                schema: new OA\Schema(
+                    required: ["name", "email", "role"],
+                    properties: [
+                        new OA\Property(property: "name", type: "string"),
+                        new OA\Property(property: "email", type: "string", format: "email"),
+                        new OA\Property(property: "contact_number", type: "string", nullable: true),
+                        new OA\Property(property: "address", type: "string", nullable: true),
+                        new OA\Property(property: "status", type: "string", enum: ["active", "inactive"]),
+                        new OA\Property(property: "role", type: "string", example: "Admin"),
+                        new OA\Property(property: "profile_image", type: "string", format: "binary"),
+                    ]
+                )
             )
         ),
         responses: [
@@ -153,10 +169,16 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
-            'role' => 'sometimes|required|exists:roles,name',
-            'status' => 'sometimes|required|in:active,inactive',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'contact_number' => 'nullable|string|max:10|min:10',
+            'address' => 'nullable|string',
+            'status' => 'required|in:active,inactive',
+            'role' => 'required|exists:roles,name',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ], [
+            'contact_number.min' => 'Contact number must be 10 digits',
+            'contact_number.max' => 'Contact number must be 10 digits',
         ]);
 
         if ($validator->fails()) {
@@ -167,8 +189,23 @@ class UserController extends Controller
             DB::beginTransaction();
 
             $data = $request->all();
-            if ($request->filled('password')) {
-                $data['password'] = Hash::make($request->password);
+            // if ($request->filled('password')) {
+            //     $data['password'] = Hash::make($request->password);
+            // }
+
+            $folderPath = public_path('uploads/users');
+            if (!File::exists($folderPath)) {
+                File::makeDirectory($folderPath, 0777, true, true);
+            }
+
+            if ($request->hasFile('profile_image')) {
+                $imageName = time() . '.' . $request->profile_image->extension();
+                $request->profile_image->move($folderPath, $imageName);
+                $data['profile_image'] = $imageName;
+
+                if ($user->profile_image && file_exists($folderPath . '/' . $user->profile_image)) {
+                    @unlink($folderPath . '/' . $user->profile_image);
+                }
             }
 
             $user->update($data);
