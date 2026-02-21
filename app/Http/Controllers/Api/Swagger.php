@@ -10,8 +10,8 @@ use OpenApi\Attributes as OA;
     description: "API documentation for Gruhnirman CRM"
 )]
 #[OA\Server(
-    url: "http://10.41.168.17:8000",
-    description: "Local Server"
+    url: L5_SWAGGER_CONST_HOST,
+    description: "Server"
 )]
 #[OA\SecurityScheme(
     securityScheme: "bearerAuth",

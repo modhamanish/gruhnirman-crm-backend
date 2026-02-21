@@ -7,8 +7,8 @@
     },
     "servers": [
         {
-            "url": "http://10.41.168.17:8000",
-            "description": "Local Server"
+            "url": "http://localhost:8000",
+            "description": "Server"
         }
     ],
     "paths": {
