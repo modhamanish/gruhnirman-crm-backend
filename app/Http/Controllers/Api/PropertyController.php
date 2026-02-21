@@ -17,56 +17,49 @@ class PropertyController extends Controller
         tags: ["Properties"],
         security: [["bearerAuth" => []]],
         parameters: [
-            new OA\Parameter(
-                name: "search",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string")
-            ),
-            new OA\Parameter(
-                name: "builder_id",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "integer")
-            ),
-            new OA\Parameter(
-                name: "category",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string")
-            ),
-            new OA\Parameter(
-                name: "type",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string")
-            ),
-            new OA\Parameter(
-                name: "status",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "string", enum: ["active", "inactive"])
-            ),
-            new OA\Parameter(
-                name: "per_page",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "integer", default: 10)
-            ),
-            new OA\Parameter(
-                name: "page",
-                in: "query",
-                required: false,
-                schema: new OA\Schema(type: "integer", default: 1)
-            ),
+            new OA\Parameter(name: "search", in: "query", required: false, schema: new OA\Schema(type: "string")),
+            new OA\Parameter(name: "builder_id", in: "query", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "category_id", in: "query", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "property_type_id", in: "query", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "status", in: "query", required: false, schema: new OA\Schema(type: "string", enum: ["active", "inactive"])),
+            new OA\Parameter(name: "per_page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 10)),
+            new OA\Parameter(name: "page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 1)),
         ],
         responses: [
             new OA\Response(response: 200, description: "Success")
         ]
     )]
-    public function index()
+    public function index(Request $request)
     {
-        $properties = Property::with('builder')->get();
+        $query = Property::with(['builder', 'category', 'propertyType']);
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('address', 'LIKE', "%{$search}%");
+            });
+        }
+
+        if ($request->has('builder_id')) {
+            $query->where('builder_id', $request->input('builder_id'));
+        }
+
+        if ($request->has('category_id')) {
+            $query->where('category_id', $request->input('category_id'));
+        }
+
+        if ($request->has('property_type_id')) {
+            $query->where('property_type_id', $request->input('property_type_id'));
+        }
+
+        if ($request->has('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        $perPage = $request->input('per_page', 10);
+        $properties = $query->orderBy('id', 'desc')->paginate($perPage);
+
         return response()->json([
             'status' => 'success',
             'results' => $properties
@@ -83,12 +76,12 @@ class PropertyController extends Controller
             content: new OA\MediaType(
                 mediaType: "multipart/form-data",
                 schema: new OA\Schema(
-                    required: ["builder_id", "name", "category", "type", "starting_price"],
+                    required: ["builder_id", "category_id", "property_type_id", "name", "starting_price"],
                     properties: [
                         new OA\Property(property: "builder_id", type: "integer", example: 1),
+                        new OA\Property(property: "category_id", type: "integer", example: 1),
+                        new OA\Property(property: "property_type_id", type: "integer", example: 1),
                         new OA\Property(property: "name", type: "string", example: "Sunrise Heights"),
-                        new OA\Property(property: "category", type: "string", example: "Residential"),
-                        new OA\Property(property: "type", type: "string", example: "Apartment"),
                         new OA\Property(property: "sq_feet", type: "string", example: "1250 sqft"),
                         new OA\Property(property: "starting_price", type: "number", format: "float", example: 4500000),
                         new OA\Property(property: "ending_price", type: "number", format: "float", example: 6000000),
@@ -113,9 +106,9 @@ class PropertyController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'builder_id' => 'required|exists:builders,id',
+            'category_id' => 'required|exists:categories,id',
+            'property_type_id' => 'required|exists:property_types,id',
             'name' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
             'starting_price' => 'required|numeric',
             'ending_price' => 'nullable|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -129,7 +122,7 @@ class PropertyController extends Controller
             return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
         }
 
-        $data = $request->all();
+        $data = $request->except(['image', 'brochure']);
         $propertyFolder = public_path('uploads/properties');
         if (!File::exists($propertyFolder)) {
             File::makeDirectory($propertyFolder, 0777, true);
@@ -155,7 +148,7 @@ class PropertyController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Property created successfully',
-            'results' => $property->load('builder')
+            'results' => $property->load(['builder', 'category', 'propertyType'])
         ], 201);
     }
 
@@ -176,7 +169,7 @@ class PropertyController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'results' => $property->load('builder')
+            'results' => $property->load(['builder', 'category', 'propertyType'])
         ]);
     }
 
@@ -193,12 +186,12 @@ class PropertyController extends Controller
             content: new OA\MediaType(
                 mediaType: "multipart/form-data",
                 schema: new OA\Schema(
-                    required: ["builder_id", "name", "category", "type", "starting_price"],
+                    required: ["builder_id", "category_id", "property_type_id", "name", "starting_price"],
                     properties: [
                         new OA\Property(property: "builder_id", type: "integer", example: 1),
+                        new OA\Property(property: "category_id", type: "integer", example: 1),
+                        new OA\Property(property: "property_type_id", type: "integer", example: 1),
                         new OA\Property(property: "name", type: "string", example: "Sunrise Heights"),
-                        new OA\Property(property: "category", type: "string", example: "Residential"),
-                        new OA\Property(property: "type", type: "string", example: "Apartment"),
                         new OA\Property(property: "sq_feet", type: "string", example: "1250 sqft"),
                         new OA\Property(property: "starting_price", type: "number", format: "float", example: 4500000),
                         new OA\Property(property: "ending_price", type: "number", format: "float", example: 6000000),
@@ -223,9 +216,9 @@ class PropertyController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'builder_id' => 'required|exists:builders,id',
+            'category_id' => 'required|exists:categories,id',
+            'property_type_id' => 'required|exists:property_types,id',
             'name' => 'required|string|max:255',
-            'category' => 'required|string|max:255',
-            'type' => 'required|string|max:255',
             'starting_price' => 'required|numeric',
             'ending_price' => 'nullable|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
@@ -239,7 +232,7 @@ class PropertyController extends Controller
             return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
         }
 
-        $data = $request->all();
+        $data = $request->except(['image', 'brochure']);
         $propertyFolder = public_path('uploads/properties');
         if (!File::exists($propertyFolder)) {
             File::makeDirectory($propertyFolder, 0777, true, true);
@@ -273,7 +266,7 @@ class PropertyController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Property updated successfully',
-            'results' => $property->load('builder')
+            'results' => $property->load(['builder', 'category', 'propertyType'])
         ]);
     }
 

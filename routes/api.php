@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\BuilderController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PropertyController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\PropertyTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,4 +42,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('properties/{property}', [PropertyController::class, 'show'])->middleware('permission:property-list');
     Route::post('properties/{property}', [PropertyController::class, 'update'])->middleware('permission:property-edit');
     Route::delete('properties/{property}', [PropertyController::class, 'destroy'])->middleware('permission:property-delete');
+
+    // Category Management
+    Route::get('categories', [CategoryController::class, 'index'])->middleware('permission:category-list');
+    Route::post('categories', [CategoryController::class, 'store'])->middleware('permission:category-create');
+    Route::get('categories/{category}', [CategoryController::class, 'show'])->middleware('permission:category-list');
+    Route::put('categories/{category}', [CategoryController::class, 'update'])->middleware('permission:category-edit');
+    Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->middleware('permission:category-delete');
+
+    // Property Type Management
+    Route::get('property-types', [PropertyTypeController::class, 'index'])->middleware('permission:property-type-list');
+    Route::post('property-types', [PropertyTypeController::class, 'store'])->middleware('permission:property-type-create');
+    Route::get('property-types/{id}', [PropertyTypeController::class, 'show'])->middleware('permission:property-type-list');
+    Route::put('property-types/{id}', [PropertyTypeController::class, 'update'])->middleware('permission:property-type-edit');
+    Route::delete('property-types/{id}', [PropertyTypeController::class, 'destroy'])->middleware('permission:property-type-delete');
 });

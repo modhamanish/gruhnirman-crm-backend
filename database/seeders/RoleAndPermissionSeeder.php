@@ -53,6 +53,14 @@ class RoleAndPermissionSeeder extends Seeder
             'property-create',
             'property-edit',
             'property-delete',
+            'category-list',
+            'category-create',
+            'category-edit',
+            'category-delete',
+            'property-type-list',
+            'property-type-create',
+            'property-type-edit',
+            'property-type-delete',
         ];
 
         foreach ($permissions as $permission) {

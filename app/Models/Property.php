@@ -8,9 +8,9 @@ class Property extends Model
 {
     protected $fillable = [
         'builder_id',
+        'category_id',
+        'property_type_id',
         'name',
-        'category',
-        'type',
         'sq_feet',
         'starting_price',
         'ending_price',
@@ -29,6 +29,16 @@ class Property extends Model
     public function builder()
     {
         return $this->belongsTo(Builder::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function propertyType()
+    {
+        return $this->belongsTo(PropertyType::class);
     }
 
     public function getImageUrlAttribute()
