@@ -251,16 +251,16 @@
                 ]
             }
         },
-        "/api/builders/{id}": {
+        "/api/builders/{builder}": {
             "get": {
                 "tags": [
                     "Builders"
                 ],
                 "summary": "Get builder details",
-                "operationId": "8c2b4e7bac0de71e9d3080eae10828e9",
+                "operationId": "20b730a28394de9d4f20243f27847984",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "builder",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -282,15 +282,15 @@
                     }
                 ]
             },
-            "put": {
+            "post": {
                 "tags": [
                     "Builders"
                 ],
                 "summary": "Update builder",
-                "operationId": "9e532c366dd7099412d4ab8821495780",
+                "operationId": "ef62506ef8702d80e77de489f19f0664",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "builder",
                         "in": "path",
                         "required": true,
                         "schema": {
@@ -301,8 +301,15 @@
                 "requestBody": {
                     "required": true,
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
+                                "required": [
+                                    "company_name",
+                                    "name",
+                                    "contact_number",
+                                    "email",
+                                    "office_address"
+                                ],
                                 "properties": {
                                     "company_name": {
                                         "type": "string"
@@ -310,12 +317,41 @@
                                     "name": {
                                         "type": "string"
                                     },
+                                    "company_logo": {
+                                        "description": "Builder Company Logo File",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "experience": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
                                     "status": {
                                         "type": "string",
                                         "enum": [
                                             "active",
                                             "inactive"
                                         ]
+                                    },
+                                    "contact_number": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "website": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "office_address": {
+                                        "type": "string"
+                                    },
+                                    "total_project_completed": {
+                                        "type": "integer"
+                                    },
+                                    "ongoing_projects": {
+                                        "type": "integer"
                                     }
                                 },
                                 "type": "object"
@@ -329,6 +365,9 @@
                     },
                     "404": {
                         "description": "Not Found"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
                     }
                 },
                 "security": [
@@ -342,10 +381,10 @@
                     "Builders"
                 ],
                 "summary": "Delete builder",
-                "operationId": "43c59756941630232c0c180061ce1cb4",
+                "operationId": "bc60d0ed2c0b2e7efb80cc75fb5f2310",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "builder",
                         "in": "path",
                         "required": true,
                         "schema": {

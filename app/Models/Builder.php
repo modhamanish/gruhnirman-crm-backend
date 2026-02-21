@@ -20,8 +20,14 @@ class Builder extends Model
         'ongoing_projects',
     ];
 
+    protected $appends = ['company_logo_url'];
     public function properties()
     {
         return $this->hasMany(Property::class);
+    }
+
+    public function getCompanyLogoUrlAttribute()
+    {
+        return $this->company_logo ? asset('uploads/builders/' . $this->company_logo) : '';
     }
 }

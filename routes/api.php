@@ -24,7 +24,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('builders', [BuilderController::class, 'index'])->middleware('permission:builder-list');
     Route::post('builders', [BuilderController::class, 'store'])->middleware('permission:builder-create');
     Route::get('builders/{builder}', [BuilderController::class, 'show'])->middleware('permission:builder-list');
-    Route::put('builders/{builder}', [BuilderController::class, 'update'])->middleware('permission:builder-edit');
+    Route::post('builders/{builder}', [BuilderController::class, 'update'])->middleware('permission:builder-edit');
     Route::delete('builders/{builder}', [BuilderController::class, 'destroy'])->middleware('permission:builder-delete');
 
     // User Management
@@ -38,7 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('properties', [PropertyController::class, 'index'])->middleware('permission:property-list');
     Route::post('properties', [PropertyController::class, 'store'])->middleware('permission:property-create');
     Route::get('properties/{property}', [PropertyController::class, 'show'])->middleware('permission:property-list');
-    Route::put('properties/{property}', [PropertyController::class, 'update'])->middleware('permission:property-edit'); // Use POST with _method=PUT for files
-    Route::post('properties/{property}', [PropertyController::class, 'update'])->middleware('permission:property-edit'); // Added POST for files
+    Route::post('properties/{property}', [PropertyController::class, 'update'])->middleware('permission:property-edit');
     Route::delete('properties/{property}', [PropertyController::class, 'destroy'])->middleware('permission:property-delete');
 });

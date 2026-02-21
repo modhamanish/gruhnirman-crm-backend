@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Property;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
 
@@ -83,17 +84,24 @@ class PropertyController extends Controller
         }
 
         $data = $request->all();
-
+        $propertyFolder = 'uploads/properties';
+        if (!File::exists($propertyFolder)) {
+            File::makeDirectory($propertyFolder, 0777, true);
+        }
         if ($request->hasFile('image')) {
             $imageName = time() . '_property.' . $request->image->extension();
-            $request->image->move(public_path('uploads/properties'), $imageName);
-            $data['image'] = 'uploads/properties/' . $imageName;
+            $request->image->move(public_path($propertyFolder), $imageName);
+            $data['image'] = $imageName;
         }
 
+        $brochureFolder = 'uploads/brochures';
+        if (!File::exists($brochureFolder)) {
+            File::makeDirectory($brochureFolder, 0777, true);
+        }
         if ($request->hasFile('brochure')) {
             $brochureName = time() . '_brochure.' . $request->brochure->extension();
-            $request->brochure->move(public_path('uploads/brochures'), $brochureName);
-            $data['brochure'] = 'uploads/brochures/' . $brochureName;
+            $request->brochure->move(public_path($brochureFolder), $brochureName);
+            $data['brochure'] = $brochureName;
         }
 
         $property = Property::create($data);
@@ -171,23 +179,32 @@ class PropertyController extends Controller
         }
 
         $data = $request->all();
-
+        $propertyFolder = 'uploads/properties';
+        if (!File::exists($propertyFolder)) {
+            File::makeDirectory($propertyFolder, 0777, true, true);
+        }
         if ($request->hasFile('image')) {
-            if ($property->image && file_exists(public_path($property->image))) {
-                @unlink(public_path($property->image));
-            }
             $imageName = time() . '_property.' . $request->image->extension();
-            $request->image->move(public_path('uploads/properties'), $imageName);
-            $data['image'] = 'uploads/properties/' . $imageName;
+            $request->image->move(public_path($propertyFolder), $imageName);
+            $data['image'] = $imageName;
+
+            if ($property->image && file_exists(public_path($propertyFolder . '/' . $property->image))) {
+                @unlink(public_path($propertyFolder . '/' . $property->image));
+            }
         }
 
+        $brochureFolder = 'uploads/brochures';
+        if (!File::exists($brochureFolder)) {
+            File::makeDirectory($brochureFolder, 0777, true, true);
+        }
         if ($request->hasFile('brochure')) {
-            if ($property->brochure && file_exists(public_path($property->brochure))) {
-                @unlink(public_path($property->brochure));
-            }
             $brochureName = time() . '_brochure.' . $request->brochure->extension();
-            $request->brochure->move(public_path('uploads/brochures'), $brochureName);
-            $data['brochure'] = 'uploads/brochures/' . $brochureName;
+            $request->brochure->move(public_path($brochureFolder), $brochureName);
+            $data['brochure'] = $brochureName;
+
+            if ($property->brochure && file_exists(public_path($brochureFolder . '/' . $property->brochure))) {
+                @unlink(public_path($brochureFolder . '/' . $property->brochure));
+            }
         }
 
         $property->update($data);
@@ -214,11 +231,13 @@ class PropertyController extends Controller
     )]
     public function destroy(Property $property)
     {
-        if ($property->image && file_exists(public_path($property->image))) {
-            @unlink(public_path($property->image));
+        $propertyFolder = 'uploads/properties';
+        $brochureFolder = 'uploads/brochures';
+        if ($property->image && file_exists(public_path($propertyFolder . '/' . $property->image))) {
+            @unlink(public_path($propertyFolder . '/' . $property->image));
         }
-        if ($property->brochure && file_exists(public_path($property->brochure))) {
-            @unlink(public_path($property->brochure));
+        if ($property->brochure && file_exists(public_path($brochureFolder . '/' . $property->brochure))) {
+            @unlink(public_path($brochureFolder . '/' . $property->brochure));
         }
 
         $property->delete();
