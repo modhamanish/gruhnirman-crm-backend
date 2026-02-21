@@ -218,7 +218,7 @@ class BuilderController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-
+        $data = $request->all();
         if ($request->hasFile('company_logo')) {
             $folderPath = public_path('uploads/builders');
             if (!File::exists($folderPath)) {
@@ -226,7 +226,8 @@ class BuilderController extends Controller
             }
             $imageName = time() . '.' . $request->company_logo->extension();
             $request->company_logo->move($folderPath, $imageName);
-            $request->merge(['company_logo' => $imageName]);
+            $data['company_logo'] = $imageName;
+            // $request->merge(['company_logo' => $imageName]);
 
             if ($builder->company_logo) {
                 $oldImage = public_path('uploads/builders/' . $builder->company_logo);
@@ -236,7 +237,7 @@ class BuilderController extends Controller
             }
         }
 
-        $builder->update($request->all());
+        $builder->update($data);
 
         return response()->json([
             'status' => 'success',

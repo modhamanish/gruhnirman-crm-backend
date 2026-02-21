@@ -29,7 +29,7 @@ class Builder extends Model
 
     public function getCompanyLogoUrlAttribute()
     {
-        if (file_exists(public_path('uploads/builders/' . $this->company_logo))) {
+        if (file_exists(public_path('uploads/builders/' . $this->company_logo)) && !empty($this->company_logo)) {
             return asset('uploads/builders/' . $this->company_logo);
         }
         return '';
