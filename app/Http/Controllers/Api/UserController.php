@@ -28,7 +28,7 @@ class UserController extends Controller
         $users = User::with('roles')->get();
         return response()->json([
             'status' => 'success',
-            'data' => $users
+            'results' => $users
         ]);
     }
 
@@ -106,7 +106,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'User created successfully',
-                'data' => $user->load('roles')
+                'results' => $user->load('roles')
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -131,7 +131,7 @@ class UserController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data' => $user->load('roles', 'permissions')
+            'results' => $user->load('roles', 'permissions')
         ]);
     }
 
@@ -219,7 +219,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'User updated successfully',
-                'data' => $user->load('roles')
+                'results' => $user->load('roles')
             ]);
         } catch (\Exception $e) {
             DB::rollBack();

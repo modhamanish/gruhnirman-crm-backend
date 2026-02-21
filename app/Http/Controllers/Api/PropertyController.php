@@ -16,6 +16,50 @@ class PropertyController extends Controller
         summary: "Get all properties",
         tags: ["Properties"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(
+                name: "search",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string")
+            ),
+            new OA\Parameter(
+                name: "builder_id",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer")
+            ),
+            new OA\Parameter(
+                name: "category",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string")
+            ),
+            new OA\Parameter(
+                name: "type",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string")
+            ),
+            new OA\Parameter(
+                name: "status",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "string", enum: ["active", "inactive"])
+            ),
+            new OA\Parameter(
+                name: "per_page",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer", default: 10)
+            ),
+            new OA\Parameter(
+                name: "page",
+                in: "query",
+                required: false,
+                schema: new OA\Schema(type: "integer", default: 1)
+            ),
+        ],
         responses: [
             new OA\Response(response: 200, description: "Success")
         ]
@@ -25,7 +69,7 @@ class PropertyController extends Controller
         $properties = Property::with('builder')->get();
         return response()->json([
             'status' => 'success',
-            'data' => $properties
+            'results' => $properties
         ]);
     }
 
@@ -111,7 +155,7 @@ class PropertyController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Property created successfully',
-            'data' => $property->load('builder')
+            'results' => $property->load('builder')
         ], 201);
     }
 
@@ -132,7 +176,7 @@ class PropertyController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data' => $property->load('builder')
+            'results' => $property->load('builder')
         ]);
     }
 
@@ -229,7 +273,7 @@ class PropertyController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Property updated successfully',
-            'data' => $property->load('builder')
+            'results' => $property->load('builder')
         ]);
     }
 

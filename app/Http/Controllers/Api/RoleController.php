@@ -26,7 +26,7 @@ class RoleController extends Controller
         $roles = Role::with('permissions')->get();
         return response()->json([
             'status' => 'success',
-            'data' => $roles
+            'results' => $roles
         ]);
     }
 
@@ -72,7 +72,7 @@ class RoleController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Role created successfully',
-                'data' => $role->load('permissions')
+                'results' => $role->load('permissions')
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -100,7 +100,7 @@ class RoleController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data' => $role->load('permissions')
+            'results' => $role->load('permissions')
         ]);
     }
 
@@ -151,7 +151,7 @@ class RoleController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Role updated successfully',
-                'data' => $role->load('permissions')
+                'results' => $role->load('permissions')
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -207,7 +207,7 @@ class RoleController extends Controller
         $permissions = Permission::all();
         return response()->json([
             'status' => 'success',
-            'data' => $permissions
+            'results' => $permissions
         ]);
     }
 }

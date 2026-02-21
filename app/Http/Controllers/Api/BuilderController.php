@@ -55,7 +55,7 @@ class BuilderController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $builders
+            'results' => $builders
         ]);
     }
 
@@ -133,7 +133,7 @@ class BuilderController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Builder created successfully',
-            'data' => $builder
+            'results' => $builder
         ], 201);
     }
 
@@ -154,7 +154,7 @@ class BuilderController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data' => $builder
+            'results' => $builder
         ]);
     }
 
@@ -241,7 +241,7 @@ class BuilderController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Builder updated successfully',
-            'data' => $builder
+            'results' => $builder
         ]);
     }
 
