@@ -43,7 +43,7 @@ class Property extends Model
 
     public function getImageUrlAttribute()
     {
-        if (file_exists(public_path('uploads/properties/' . $this->image))) {
+        if (file_exists(public_path('uploads/properties/' . $this->image)) && !empty($this->image)) {
             return asset('uploads/properties/' . $this->image);
         }
         return '';
@@ -51,7 +51,7 @@ class Property extends Model
 
     public function getBrochureUrlAttribute()
     {
-        if (file_exists(public_path('uploads/brochures/' . $this->brochure))) {
+        if (file_exists(public_path('uploads/brochures/' . $this->brochure)) && !empty($this->brochure)) {
             return asset('uploads/brochures/' . $this->brochure);
         }
         return '';
