@@ -59,6 +59,9 @@ class User extends Authenticatable
 
     public function getProfileImageUrlAttribute()
     {
-        return $this->profile_image ? asset('uploads/users/' . $this->profile_image) : '';
+        if (file_exists(public_path('uploads/users/' . $this->profile_image))) {
+            return asset('uploads/users/' . $this->profile_image);
+        }
+        return '';
     }
 }
