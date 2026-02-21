@@ -199,6 +199,10 @@
                                         "type": "string",
                                         "format": "binary"
                                     },
+                                    "logo_url": {
+                                        "description": "Builder Company Logo URL",
+                                        "type": "string"
+                                    },
                                     "experience": {
                                         "type": "string",
                                         "nullable": true
@@ -321,6 +325,10 @@
                                         "description": "Builder Company Logo File",
                                         "type": "string",
                                         "format": "binary"
+                                    },
+                                    "logo_url": {
+                                        "description": "Builder Company Logo URL",
+                                        "type": "string"
                                     },
                                     "experience": {
                                         "type": "string",
@@ -584,24 +592,73 @@
                     "content": {
                         "multipart/form-data": {
                             "schema": {
+                                "required": [
+                                    "builder_id",
+                                    "name",
+                                    "category",
+                                    "type",
+                                    "starting_price"
+                                ],
                                 "properties": {
-                                    "_method": {
-                                        "type": "string",
-                                        "example": "PUT"
+                                    "builder_id": {
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "name": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "Sunrise Heights"
+                                    },
+                                    "category": {
+                                        "type": "string",
+                                        "example": "Residential"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "Apartment"
+                                    },
+                                    "sq_feet": {
+                                        "type": "string",
+                                        "example": "1250 sqft"
                                     },
                                     "starting_price": {
-                                        "type": "number"
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 4500000
+                                    },
+                                    "ending_price": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 6000000
                                     },
                                     "image": {
+                                        "description": "Property Image",
                                         "type": "string",
                                         "format": "binary"
                                     },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "123 Street, City"
+                                    },
+                                    "latitude": {
+                                        "type": "string",
+                                        "example": "22.3421061"
+                                    },
+                                    "longitude": {
+                                        "type": "string",
+                                        "example": "70.7299631"
+                                    },
+                                    "youtube_link": {
+                                        "type": "string",
+                                        "example": "https://youtu.be/..."
+                                    },
                                     "brochure": {
+                                        "description": "Property Brochure",
                                         "type": "string",
                                         "format": "binary"
+                                    },
+                                    "additional_note": {
+                                        "type": "string",
+                                        "example": "Near Metro station"
                                     },
                                     "status": {
                                         "type": "string",

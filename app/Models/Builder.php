@@ -10,6 +10,7 @@ class Builder extends Model
         'company_name',
         'name',
         'company_logo',
+        'logo_url',
         'experience',
         'status',
         'contact_number',
