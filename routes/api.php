@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PropertyTypeController;
+use App\Http\Controllers\Api\LeadSourceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -56,4 +57,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('property-types/{id}', [PropertyTypeController::class, 'show'])->middleware('permission:property-type-list');
     Route::put('property-types/{id}', [PropertyTypeController::class, 'update'])->middleware('permission:property-type-edit');
     Route::delete('property-types/{id}', [PropertyTypeController::class, 'destroy'])->middleware('permission:property-type-delete');
+
+    // Lead Source Management
+    Route::get('lead-sources', [LeadSourceController::class, 'index'])->middleware('permission:lead-source-list');
+    Route::post('lead-sources', [LeadSourceController::class, 'store'])->middleware('permission:lead-source-create');
+    Route::get('lead-sources/{leadSource}', [LeadSourceController::class, 'show'])->middleware('permission:lead-source-list');
+    Route::put('lead-sources/{leadSource}', [LeadSourceController::class, 'update'])->middleware('permission:lead-source-edit');
+    Route::delete('lead-sources/{leadSource}', [LeadSourceController::class, 'destroy'])->middleware('permission:lead-source-delete');
 });

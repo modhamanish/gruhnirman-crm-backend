@@ -61,6 +61,10 @@ class RoleAndPermissionSeeder extends Seeder
             'property-type-create',
             'property-type-edit',
             'property-type-delete',
+            'lead-source-list',
+            'lead-source-create',
+            'lead-source-edit',
+            'lead-source-delete',
         ];
 
         foreach ($permissions as $permission) {
