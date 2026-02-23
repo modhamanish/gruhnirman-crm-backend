@@ -27,7 +27,7 @@ class CategoryController extends Controller
     )]
     public function index(Request $request)
     {
-        $query = Category::query();
+        $query = Category::withCount('propertyTypes');
 
         if ($request->has('search')) {
             $query->where('name', 'LIKE', '%' . $request->search . '%');
