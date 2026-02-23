@@ -65,6 +65,10 @@ class RoleAndPermissionSeeder extends Seeder
             'lead-source-create',
             'lead-source-edit',
             'lead-source-delete',
+            'lead-status-list',
+            'lead-status-create',
+            'lead-status-edit',
+            'lead-status-delete',
         ];
 
         foreach ($permissions as $permission) {

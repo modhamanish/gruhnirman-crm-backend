@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\PropertyTypeController;
 use App\Http\Controllers\Api\LeadSourceController;
+use App\Http\Controllers\Api\LeadStatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -64,4 +65,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('lead-sources/{leadSource}', [LeadSourceController::class, 'show'])->middleware('permission:lead-source-list');
     Route::put('lead-sources/{leadSource}', [LeadSourceController::class, 'update'])->middleware('permission:lead-source-edit');
     Route::delete('lead-sources/{leadSource}', [LeadSourceController::class, 'destroy'])->middleware('permission:lead-source-delete');
+
+    // Lead Status Management
+    Route::get('lead-statuses', [LeadStatusController::class, 'index'])->middleware('permission:lead-status-list');
+    Route::post('lead-statuses', [LeadStatusController::class, 'store'])->middleware('permission:lead-status-create');
+    Route::get('lead-statuses/{leadStatus}', [LeadStatusController::class, 'show'])->middleware('permission:lead-status-list');
+    Route::put('lead-statuses/{leadStatus}', [LeadStatusController::class, 'update'])->middleware('permission:lead-status-edit');
+    Route::delete('lead-statuses/{leadStatus}', [LeadStatusController::class, 'destroy'])->middleware('permission:lead-status-delete');
 });
