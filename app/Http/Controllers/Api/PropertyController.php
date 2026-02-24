@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Property;
+use App\Models\PropertyItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
@@ -33,7 +34,7 @@ class PropertyController extends Controller
     )]
     public function index(Request $request)
     {
-        $query = Property::with(['builder', 'category', 'propertyType']);
+        $query = Property::with(['builder', 'category', 'propertyType', 'items']);
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -92,7 +93,6 @@ class PropertyController extends Controller
                         new OA\Property(property: "category_id", type: "integer", example: 1),
                         new OA\Property(property: "property_type_id", type: "integer", example: 1),
                         new OA\Property(property: "name", type: "string", example: "Sunrise Heights"),
-                        new OA\Property(property: "sq_feet", type: "string", example: "1250 sqft"),
                         new OA\Property(property: "starting_price", type: "number", format: "float", example: 4500000),
                         new OA\Property(property: "ending_price", type: "number", format: "float", example: 6000000),
                         new OA\Property(property: "image", type: "string", format: "binary", description: "Property Image"),
@@ -103,6 +103,18 @@ class PropertyController extends Controller
                         new OA\Property(property: "brochure", type: "string", format: "binary", description: "Property Brochure"),
                         new OA\Property(property: "additional_note", type: "string", example: "Near Metro station"),
                         new OA\Property(property: "status", type: "string", enum: ["active", "inactive"]),
+                        new OA\Property(
+                            property: "items",
+                            type: "array",
+                            items: new OA\Items(
+                                type: "object",
+                                required: ["sq_feet", "price"],
+                                properties: [
+                                    new OA\Property(property: "sq_feet", type: "string", example: "1000"),
+                                    new OA\Property(property: "price", type: "number", format: "float", example: 5000000),
+                                ]
+                            )
+                        ),
                     ]
                 )
             )
@@ -114,6 +126,28 @@ class PropertyController extends Controller
     )]
     public function store(Request $request)
     {
+        if ($request->has('items')) {
+            $items = $request->items;
+            if (is_string($items)) {
+                $decoded = json_decode($items, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $items = $decoded;
+                }
+            }
+
+            if (is_array($items)) {
+                foreach ($items as $key => $item) {
+                    if (is_string($item)) {
+                        $decodedItem = json_decode($item, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $items[$key] = $decodedItem;
+                        }
+                    }
+                }
+                $request->merge(['items' => $items]);
+            }
+        }
+
         $validator = Validator::make($request->all(), [
             'builder_id' => 'required|exists:builders,id',
             'category_id' => 'required|exists:categories,id',
@@ -124,6 +158,9 @@ class PropertyController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'brochure' => 'nullable|mimes:pdf,doc,docx|max:5120',
             'status' => 'required|in:active,inactive',
+            'items' => 'nullable|array',
+            'items.*.sq_feet' => 'required_with:items|string|max:255',
+            'items.*.price' => 'required_with:items|numeric',
         ], [
             'builder_id.exists' => 'Builder not found'
         ]);
@@ -155,10 +192,16 @@ class PropertyController extends Controller
 
         $property = Property::create($data);
 
+        if ($request->has('items') && is_array($request->items)) {
+            foreach ($request->items as $item) {
+                $property->items()->create($item);
+            }
+        }
+
         return response()->json([
             'status' => 'success',
             'message' => 'Property created successfully',
-            'results' => $property->load(['builder', 'category', 'propertyType'])
+            'results' => $property->load(['builder', 'category', 'propertyType', 'items'])
         ], 201);
     }
 
@@ -179,7 +222,7 @@ class PropertyController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'results' => $property->load(['builder', 'category', 'propertyType'])
+            'results' => $property->load(['builder', 'category', 'propertyType', 'items'])
         ]);
     }
 
@@ -202,7 +245,6 @@ class PropertyController extends Controller
                         new OA\Property(property: "category_id", type: "integer", example: 1),
                         new OA\Property(property: "property_type_id", type: "integer", example: 1),
                         new OA\Property(property: "name", type: "string", example: "Sunrise Heights"),
-                        new OA\Property(property: "sq_feet", type: "string", example: "1250 sqft"),
                         new OA\Property(property: "starting_price", type: "number", format: "float", example: 4500000),
                         new OA\Property(property: "ending_price", type: "number", format: "float", example: 6000000),
                         new OA\Property(property: "image", type: "string", format: "binary", description: "Property Image"),
@@ -213,6 +255,18 @@ class PropertyController extends Controller
                         new OA\Property(property: "brochure", type: "string", format: "binary", description: "Property Brochure"),
                         new OA\Property(property: "additional_note", type: "string", example: "Near Metro station"),
                         new OA\Property(property: "status", type: "string", enum: ["active", "inactive"]),
+                        new OA\Property(
+                            property: "items",
+                            type: "array",
+                            items: new OA\Items(
+                                type: "object",
+                                properties: [
+                                    new OA\Property(property: "id", type: "integer", example: 1),
+                                    new OA\Property(property: "sq_feet", type: "string", example: "1200"),
+                                    new OA\Property(property: "price", type: "number", format: "float", example: 6000000),
+                                ]
+                            )
+                        ),
                     ]
                 )
             )
@@ -224,6 +278,28 @@ class PropertyController extends Controller
     )]
     public function update(Request $request, Property $property)
     {
+        if ($request->has('items')) {
+            $items = $request->items;
+            if (is_string($items)) {
+                $decoded = json_decode($items, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $items = $decoded;
+                }
+            }
+
+            if (is_array($items)) {
+                foreach ($items as $key => $item) {
+                    if (is_string($item)) {
+                        $decodedItem = json_decode($item, true);
+                        if (json_last_error() === JSON_ERROR_NONE) {
+                            $items[$key] = $decodedItem;
+                        }
+                    }
+                }
+                $request->merge(['items' => $items]);
+            }
+        }
+
         $validator = Validator::make($request->all(), [
             'builder_id' => 'required|exists:builders,id',
             'category_id' => 'required|exists:categories,id',
@@ -234,6 +310,10 @@ class PropertyController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'brochure' => 'nullable|mimes:pdf,doc,docx|max:5120',
             'status' => 'required|in:active,inactive',
+            'items' => 'nullable|array',
+            'items.*.id' => 'nullable|exists:property_items,id',
+            'items.*.sq_feet' => 'required_with:items|string|max:255',
+            'items.*.price' => 'required_with:items|numeric',
         ], [
             'builder_id.exists' => 'Builder not found',
         ]);
@@ -242,7 +322,8 @@ class PropertyController extends Controller
             return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
         }
 
-        $data = $request->except(['image', 'brochure']);
+        $data = $request->except(['image', 'brochure', 'items']);
+
         $propertyFolder = public_path('uploads/properties');
         if (!File::exists($propertyFolder)) {
             File::makeDirectory($propertyFolder, 0777, true, true);
@@ -272,11 +353,25 @@ class PropertyController extends Controller
         }
 
         $property->update($data);
+        $itemsId = $property->items()->pluck('id')->toArray();
+        $updateItemsId = [];
+        if ($request->has('items') && is_array($request->items)) {
+            foreach ($request->items as $item) {
+                if (isset($item['id'])) {
+                    $updateItemsId[] = $item['id'];
+                    $property->items()->where('id', $item['id'])->update($item);
+                } else {
+                    $property->items()->create($item);
+                }
+            }
+            $deleteItemsId = array_diff($itemsId, $updateItemsId);
+            $property->items()->whereIn('id', $deleteItemsId)->delete();
+        }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Property updated successfully',
-            'results' => $property->load(['builder', 'category', 'propertyType'])
+            'results' => $property->load(['builder', 'category', 'propertyType', 'items'])
         ]);
     }
 

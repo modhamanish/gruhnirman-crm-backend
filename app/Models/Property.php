@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\PropertyItem;
 
 class Property extends Model
 {
@@ -11,7 +12,6 @@ class Property extends Model
         'category_id',
         'property_type_id',
         'name',
-        'sq_feet',
         'starting_price',
         'ending_price',
         'image',
@@ -25,6 +25,11 @@ class Property extends Model
     ];
 
     protected $appends = ['image_url', 'brochure_url'];
+
+    public function items()
+    {
+        return $this->hasMany(PropertyItem::class);
+    }
 
     public function builder()
     {

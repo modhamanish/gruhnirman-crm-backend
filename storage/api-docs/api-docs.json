@@ -1282,10 +1282,6 @@
                                         "type": "string",
                                         "example": "Sunrise Heights"
                                     },
-                                    "sq_feet": {
-                                        "type": "string",
-                                        "example": "1250 sqft"
-                                    },
                                     "starting_price": {
                                         "type": "number",
                                         "format": "float",
@@ -1332,6 +1328,23 @@
                                             "active",
                                             "inactive"
                                         ]
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "sq_feet": {
+                                                    "type": "string",
+                                                    "example": "1000"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 5000000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
@@ -1430,10 +1443,6 @@
                                         "type": "string",
                                         "example": "Sunrise Heights"
                                     },
-                                    "sq_feet": {
-                                        "type": "string",
-                                        "example": "1250 sqft"
-                                    },
                                     "starting_price": {
                                         "type": "number",
                                         "format": "float",
@@ -1480,6 +1489,27 @@
                                             "active",
                                             "inactive"
                                         ]
+                                    },
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "sq_feet": {
+                                                    "type": "string",
+                                                    "example": "1200"
+                                                },
+                                                "price": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 6000000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
                                     }
                                 },
                                 "type": "object"
