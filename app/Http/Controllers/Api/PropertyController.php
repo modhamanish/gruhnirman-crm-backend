@@ -218,8 +218,15 @@ class PropertyController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function show(Property $property)
+    public function show($id)
     {
+        $property = Property::find($id);
+        if (!$property) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Property not found'
+            ], 404);
+        }
         return response()->json([
             'status' => 'success',
             'results' => $property->load(['builder', 'category', 'propertyType', 'items'])
@@ -276,8 +283,15 @@ class PropertyController extends Controller
             new OA\Response(response: 422, description: "Validation Error")
         ]
     )]
-    public function update(Request $request, Property $property)
+    public function update(Request $request, $id)
     {
+        $property = Property::find($id);
+        if (!$property) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Property not found'
+            ], 404);
+        }
         if ($request->has('items')) {
             $items = $request->items;
             if (is_string($items)) {
@@ -388,8 +402,15 @@ class PropertyController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function destroy(Property $property)
+    public function destroy($id)
     {
+        $property = Property::find($id);
+        if (!$property) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Property not found'
+            ], 404);
+        }
         $propertyFolder = 'uploads/properties';
         $brochureFolder = 'uploads/brochures';
         if ($property->image && file_exists(public_path($propertyFolder . '/' . $property->image))) {

@@ -96,8 +96,15 @@ class RoleController extends Controller
             new OA\Response(response: 404, description: "Role not found")
         ]
     )]
-    public function show(Role $role)
+    public function show($id)
     {
+        $role = Role::find($id);
+        if (!$role) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Role not found'
+            ], 404);
+        }
         return response()->json([
             'status' => 'success',
             'results' => $role->load('permissions')
@@ -127,8 +134,15 @@ class RoleController extends Controller
             new OA\Response(response: 404, description: "Role not found")
         ]
     )]
-    public function update(Request $request, Role $role)
+    public function update(Request $request, $id)
     {
+        $role = Role::find($id);
+        if (!$role) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Role not found'
+            ], 404);
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:roles,name,' . $role->id,
             'permissions' => 'required|array',
@@ -176,8 +190,15 @@ class RoleController extends Controller
             new OA\Response(response: 404, description: "Role not found")
         ]
     )]
-    public function destroy(Role $role)
+    public function destroy($id)
     {
+        $role = Role::find($id);
+        if (!$role) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Role not found'
+            ], 404);
+        }
         if ($role->name === 'Super Admin') {
             return response()->json([
                 'status' => 'error',

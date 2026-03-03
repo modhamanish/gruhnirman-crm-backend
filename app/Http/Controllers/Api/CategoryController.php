@@ -106,12 +106,20 @@ class CategoryController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function show(Category $category)
+    public function show($id)
     {
-        return response()->json([
-            'status' => 'success',
-            'results' => $category->load('propertyTypes')
-        ]);
+        $category = Category::find($id);
+        if ($category) {
+            return response()->json([
+                'status' => 'success',
+                'results' => $category->load('propertyTypes')
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Category not found'
+            ], 404);
+        }
     }
 
     #[OA\Put(
@@ -138,8 +146,15 @@ class CategoryController extends Controller
             new OA\Response(response: 422, description: "Validation Error")
         ]
     )]
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Category not found'
+            ], 404);
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
             'status' => 'nullable|in:active,inactive',
@@ -174,8 +189,15 @@ class CategoryController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function destroy(Category $category)
+    public function destroy($id)
     {
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Category not found'
+            ], 404);
+        }
         $category->delete();
         return response()->json([
             'status' => 'success',

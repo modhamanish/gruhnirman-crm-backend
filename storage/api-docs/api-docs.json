@@ -681,6 +681,357 @@
                 ]
             }
         },
+        "/api/leads": {
+            "get": {
+                "tags": [
+                    "Leads"
+                ],
+                "summary": "Get all leads",
+                "operationId": "35c6844d021336b11f6dfdeff94dd1dc",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "property_type_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "lead_status_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "lead_source_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "assigned_to",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Leads"
+                ],
+                "summary": "Create a new lead",
+                "operationId": "03cafc6443fab89b0fc03c604233a2e8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "contact_number",
+                                    "category_id",
+                                    "property_type_id",
+                                    "lead_status_id",
+                                    "lead_source_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "cast": {
+                                        "type": "string",
+                                        "example": "Patel"
+                                    },
+                                    "contact_number": {
+                                        "type": "string",
+                                        "example": "9876543210"
+                                    },
+                                    "inquiry_for": {
+                                        "type": "string",
+                                        "example": "3BHK Flat"
+                                    },
+                                    "interested_area": {
+                                        "type": "string",
+                                        "example": "Raiya Road"
+                                    },
+                                    "area_latitude": {
+                                        "type": "string",
+                                        "example": "22.3039"
+                                    },
+                                    "area_longitude": {
+                                        "type": "string",
+                                        "example": "70.8022"
+                                    },
+                                    "min_budget": {
+                                        "type": "string",
+                                        "example": "5000000"
+                                    },
+                                    "max_budget": {
+                                        "type": "string",
+                                        "example": "6000000"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "property_type_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "lead_status_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "lead_source_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "assigned_to": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/leads/{id}": {
+            "get": {
+                "tags": [
+                    "Leads"
+                ],
+                "summary": "Get lead details",
+                "operationId": "8d8d78672486dcaae177118f446cc900",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Leads"
+                ],
+                "summary": "Update lead",
+                "operationId": "2f1eb4af104afe93d398bdd7fae68129",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "contact_number",
+                                    "category_id",
+                                    "property_type_id",
+                                    "lead_status_id",
+                                    "lead_source_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "cast": {
+                                        "type": "string",
+                                        "example": "Patel"
+                                    },
+                                    "contact_number": {
+                                        "type": "string",
+                                        "example": "9876543210"
+                                    },
+                                    "inquiry_for": {
+                                        "type": "string",
+                                        "example": "3BHK Flat"
+                                    },
+                                    "interested_area": {
+                                        "type": "string",
+                                        "example": "Raiya Road"
+                                    },
+                                    "area_latitude": {
+                                        "type": "string",
+                                        "example": "22.3039"
+                                    },
+                                    "area_longitude": {
+                                        "type": "string",
+                                        "example": "70.8022"
+                                    },
+                                    "min_budget": {
+                                        "type": "string",
+                                        "example": "5000000"
+                                    },
+                                    "max_budget": {
+                                        "type": "string",
+                                        "example": "6000000"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "property_type_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "lead_status_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "lead_source_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "assigned_to": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Leads"
+                ],
+                "summary": "Delete lead",
+                "operationId": "578b2c094509c22b8921c1257fd0025a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/lead-sources": {
             "get": {
                 "tags": [
@@ -1332,6 +1683,10 @@
                                     "items": {
                                         "type": "array",
                                         "items": {
+                                            "required": [
+                                                "sq_feet",
+                                                "price"
+                                            ],
                                             "properties": {
                                                 "sq_feet": {
                                                     "type": "string",
@@ -2270,6 +2625,10 @@
         {
             "name": "Categories",
             "description": "Categories"
+        },
+        {
+            "name": "Leads",
+            "description": "Leads"
         },
         {
             "name": "Lead Sources",

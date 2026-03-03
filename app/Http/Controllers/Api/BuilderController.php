@@ -150,12 +150,20 @@ class BuilderController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function show(Builder $builder)
+    public function show($id)
     {
-        return response()->json([
-            'status' => 'success',
-            'results' => $builder
-        ]);
+        $builder = Builder::find($id);
+        if ($builder) {
+            return response()->json([
+                'status' => 'success',
+                'results' => $builder
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Builder not found'
+            ], 404);
+        }
     }
 
     #[OA\Post(
@@ -195,8 +203,15 @@ class BuilderController extends Controller
             new OA\Response(response: 422, description: "Unprocessable Entity")
         ]
     )]
-    public function update(Request $request, Builder $builder)
+    public function update(Request $request, $id)
     {
+        $builder = Builder::find($id);
+        if (!$builder) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Builder not found'
+            ], 404);
+        }
         $validator = Validator::make($request->all(), [
             'company_name' => 'required|string|max:255',
             'name' => 'required|string|max:255',
@@ -259,8 +274,15 @@ class BuilderController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function destroy(Builder $builder)
+    public function destroy($id)
     {
+        $builder = Builder::find($id);
+        if (!$builder) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Builder not found'
+            ], 404);
+        }
         if ($builder->company_logo) {
             $oldImage = public_path('uploads/builders/' . $builder->company_logo);
             if (File::exists($oldImage)) {

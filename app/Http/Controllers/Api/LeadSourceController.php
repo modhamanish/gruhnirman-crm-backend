@@ -105,12 +105,20 @@ class LeadSourceController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function show(LeadSource $leadSource)
+    public function show($id)
     {
-        return response()->json([
-            'status' => 'success',
-            'results' => $leadSource
-        ]);
+        $leadSource = LeadSource::find($id);
+        if ($leadSource) {
+            return response()->json([
+                'status' => 'success',
+                'results' => $leadSource
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lead source not found'
+            ], 404);
+        }
     }
 
     #[OA\Put(
@@ -137,8 +145,15 @@ class LeadSourceController extends Controller
             new OA\Response(response: 422, description: "Validation Error")
         ]
     )]
-    public function update(Request $request, LeadSource $leadSource)
+    public function update(Request $request, $id)
     {
+        $leadSource = LeadSource::find($id);
+        if (!$leadSource) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lead source not found'
+            ], 404);
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:lead_sources,name,' . $leadSource->id,
             'status' => 'nullable|in:active,inactive',
@@ -173,8 +188,15 @@ class LeadSourceController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function destroy(LeadSource $leadSource)
+    public function destroy($id)
     {
+        $leadSource = LeadSource::find($id);
+        if (!$leadSource) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lead source not found'
+            ], 404);
+        }
         $leadSource->delete();
         return response()->json([
             'status' => 'success',

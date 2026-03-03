@@ -114,12 +114,20 @@ class LeadStatusController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function show(LeadStatus $leadStatus)
+    public function show($id)
     {
-        return response()->json([
-            'status' => 'success',
-            'results' => $leadStatus
-        ]);
+        $leadStatus = LeadStatus::find($id);
+        if ($leadStatus) {
+            return response()->json([
+                'status' => 'success',
+                'results' => $leadStatus
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lead status not found'
+            ], 404);
+        }
     }
 
     #[OA\Put(
@@ -148,8 +156,15 @@ class LeadStatusController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function update(Request $request, LeadStatus $leadStatus)
+    public function update(Request $request, $id)
     {
+        $leadStatus = LeadStatus::find($id);
+        if (!$leadStatus) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lead status not found'
+            ], 404);
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:lead_statuses,name,' . $leadStatus->id,
             'is_initial' => 'nullable|boolean',
@@ -190,8 +205,15 @@ class LeadStatusController extends Controller
             new OA\Response(response: 404, description: "Not Found")
         ]
     )]
-    public function destroy(LeadStatus $leadStatus)
+    public function destroy($id)
     {
+        $leadStatus = LeadStatus::find($id);
+        if (!$leadStatus) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lead status not found'
+            ], 404);
+        }
         $leadStatus->delete();
         return response()->json([
             'status' => 'success',
