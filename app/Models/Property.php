@@ -15,16 +15,18 @@ class Property extends Model
         'starting_price',
         'ending_price',
         'image',
+        'image_url',
         'address',
         'latitude',
         'longitude',
         'youtube_link',
         'brochure',
+        'brochure_url',
         'additional_note',
         'status',
     ];
 
-    protected $appends = ['image_url', 'brochure_url'];
+    protected $appends = ['image_display_url', 'brochure_display_url'];
 
     public function items()
     {
@@ -46,19 +48,19 @@ class Property extends Model
         return $this->belongsTo(PropertyType::class);
     }
 
-    public function getImageUrlAttribute()
+    public function getImageDisplayUrlAttribute()
     {
-        if (file_exists(public_path('uploads/properties/' . $this->image)) && !empty($this->image)) {
+        if (!empty($this->image) && file_exists(public_path('uploads/properties/' . $this->image))) {
             return asset('uploads/properties/' . $this->image);
         }
-        return '';
+        return $this->image_url ?? '';
     }
 
-    public function getBrochureUrlAttribute()
+    public function getBrochureDisplayUrlAttribute()
     {
-        if (file_exists(public_path('uploads/brochures/' . $this->brochure)) && !empty($this->brochure)) {
+        if (!empty($this->brochure) && file_exists(public_path('uploads/brochures/' . $this->brochure))) {
             return asset('uploads/brochures/' . $this->brochure);
         }
-        return '';
+        return $this->brochure_url ?? '';
     }
 }
