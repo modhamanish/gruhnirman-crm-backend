@@ -1333,13 +1333,17 @@
                                         "type": "string",
                                         "example": "New Lead"
                                     },
+                                    "color": {
+                                        "type": "string",
+                                        "example": "#FF0000"
+                                    },
+                                    "icon": {
+                                        "type": "string",
+                                        "example": "file-text"
+                                    },
                                     "is_initial": {
                                         "type": "boolean",
                                         "example": true
-                                    },
-                                    "is_final": {
-                                        "type": "boolean",
-                                        "example": false
                                     },
                                     "status": {
                                         "type": "string",
@@ -1430,11 +1434,15 @@
                                         "type": "string",
                                         "example": "Qualified"
                                     },
-                                    "is_initial": {
-                                        "type": "boolean",
-                                        "example": false
+                                    "color": {
+                                        "type": "string",
+                                        "example": "#00FF00"
                                     },
-                                    "is_final": {
+                                    "icon": {
+                                        "type": "string",
+                                        "example": "check-circle"
+                                    },
+                                    "is_initial": {
                                         "type": "boolean",
                                         "example": false
                                     },
@@ -1644,9 +1652,13 @@
                                         "example": 6000000
                                     },
                                     "image": {
-                                        "description": "Property Image",
+                                        "description": "Property Image File",
                                         "type": "string",
                                         "format": "binary"
+                                    },
+                                    "image_url": {
+                                        "description": "Property Image URL",
+                                        "type": "string"
                                     },
                                     "address": {
                                         "type": "string",
@@ -1665,9 +1677,13 @@
                                         "example": "https://youtu.be/..."
                                     },
                                     "brochure": {
-                                        "description": "Property Brochure",
+                                        "description": "Property Brochure File",
                                         "type": "string",
                                         "format": "binary"
+                                    },
+                                    "brochure_url": {
+                                        "description": "Property Brochure URL",
+                                        "type": "string"
                                     },
                                     "additional_note": {
                                         "type": "string",
@@ -1809,9 +1825,13 @@
                                         "example": 6000000
                                     },
                                     "image": {
-                                        "description": "Property Image",
+                                        "description": "Property Image File",
                                         "type": "string",
                                         "format": "binary"
+                                    },
+                                    "image_url": {
+                                        "description": "Property Image URL",
+                                        "type": "string"
                                     },
                                     "address": {
                                         "type": "string",
@@ -1830,9 +1850,13 @@
                                         "example": "https://youtu.be/..."
                                     },
                                     "brochure": {
-                                        "description": "Property Brochure",
+                                        "description": "Property Brochure File",
                                         "type": "string",
                                         "format": "binary"
+                                    },
+                                    "brochure_url": {
+                                        "description": "Property Brochure URL",
+                                        "type": "string"
                                     },
                                     "additional_note": {
                                         "type": "string",
@@ -2373,6 +2397,338 @@
                 ]
             }
         },
+        "/api/site-visits": {
+            "get": {
+                "tags": [
+                    "Site Visits"
+                ],
+                "summary": "Get all site visits",
+                "operationId": "a4892f844d5ea541c630620877d7d043",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "lead_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "property_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "visited",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Yes",
+                                "No"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "interest_status",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Thinking",
+                                "Interested",
+                                "Highly Interested",
+                                "Not Interested"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Site Visits"
+                ],
+                "summary": "Create a new site visit",
+                "operationId": "d9356000ee9554ce3ab330a8fc1f8644",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "lead_id",
+                                    "property_id",
+                                    "user_id",
+                                    "visit_date"
+                                ],
+                                "properties": {
+                                    "lead_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "property_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "user_id": {
+                                        "description": "Site Visit Executive",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "unit_type": {
+                                        "type": "string",
+                                        "example": "3BHK Flat"
+                                    },
+                                    "visit_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-03-12 16:00:00"
+                                    },
+                                    "visited": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Yes",
+                                            "No"
+                                        ],
+                                        "example": "No"
+                                    },
+                                    "interest_status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Thinking",
+                                            "Interested",
+                                            "Highly Interested",
+                                            "Not Interested"
+                                        ],
+                                        "example": "Thinking"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Client is interested in the project."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/site-visits/{id}": {
+            "get": {
+                "tags": [
+                    "Site Visits"
+                ],
+                "summary": "Get site visit details",
+                "operationId": "50baf601f49b8ea298e9787ae043cb0b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Site Visits"
+                ],
+                "summary": "Update site visit",
+                "operationId": "224c72c4761fcd127bcc2fb099bc6211",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "lead_id",
+                                    "property_id",
+                                    "user_id",
+                                    "visit_date"
+                                ],
+                                "properties": {
+                                    "lead_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "property_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "unit_type": {
+                                        "type": "string",
+                                        "example": "3BHK Flat"
+                                    },
+                                    "visit_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-03-12 16:00:00"
+                                    },
+                                    "visited": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Yes",
+                                            "No"
+                                        ],
+                                        "example": "Yes"
+                                    },
+                                    "interest_status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Thinking",
+                                            "Interested",
+                                            "Highly Interested",
+                                            "Not Interested"
+                                        ],
+                                        "example": "Interested"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Updated interaction notes."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Site Visits"
+                ],
+                "summary": "Delete site visit",
+                "operationId": "944ab1895685a532acb2b52d2cb94d12",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -2649,6 +3005,10 @@
         {
             "name": "Roles",
             "description": "Roles"
+        },
+        {
+            "name": "Site Visits",
+            "description": "Site Visits"
         },
         {
             "name": "Users",

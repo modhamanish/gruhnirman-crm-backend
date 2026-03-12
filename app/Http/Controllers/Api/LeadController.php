@@ -155,6 +155,9 @@ class LeadController extends Controller
     {
         $lead = Lead::find($id);
         if ($lead) {
+            $lead->site_visits_count = $lead->siteVisits()->count();
+            // get next site visit
+            $lead->next_site_visit = $lead->siteVisits()->where('visit_date', '>=', date('Y-m-d H:i:s'))->orderBy('visit_date', 'asc')->first();
             return response()->json([
                 'status' => 'success',
                 'results' => $lead->load(['category', 'propertyType', 'leadStatus', 'leadSource', 'assignedTo', 'creator'])

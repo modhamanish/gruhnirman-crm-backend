@@ -20,4 +20,11 @@ class LeadStatus extends Model
     protected $casts = [
         'is_initial' => 'boolean',
     ];
+
+    protected $appends = ['lead_count'];
+
+    public function getLeadCountAttribute()
+    {
+        return Lead::where('lead_status_id', $this->id)->count();
+    }
 }

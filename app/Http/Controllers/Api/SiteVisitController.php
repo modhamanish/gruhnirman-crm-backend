@@ -115,6 +115,7 @@ class SiteVisitController extends Controller
             return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
         }
         $input = $request->all();
+        $input['visit_date'] = date('Y-m-d H:i:s', strtotime($request->visit_date));
         $input['added_by'] = Auth::user()->id;
         $siteVisit = SiteVisit::create($input);
 
@@ -208,7 +209,9 @@ class SiteVisitController extends Controller
             return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
         }
 
-        $siteVisit->update($request->all());
+        $input = $request->all();
+        $input['visit_date'] = date('Y-m-d H:i:s', strtotime($request->visit_date));
+        $siteVisit->update($input);
 
         return response()->json([
             'status' => 'success',
