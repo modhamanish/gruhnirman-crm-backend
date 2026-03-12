@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PropertyTypeController;
 use App\Http\Controllers\Api\LeadSourceController;
 use App\Http\Controllers\Api\LeadStatusController;
 use App\Http\Controllers\Api\LeadController;
+use App\Http\Controllers\Api\SiteVisitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -80,4 +81,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('leads/{lead}', [LeadController::class, 'show'])->middleware('permission:lead-list');
     Route::put('leads/{lead}', [LeadController::class, 'update'])->middleware('permission:lead-edit');
     Route::delete('leads/{lead}', [LeadController::class, 'destroy'])->middleware('permission:lead-delete');
+
+    // Site Visit Management
+    Route::get('site-visits', [SiteVisitController::class, 'index'])->middleware('permission:site-visit-list');
+    Route::post('site-visits', [SiteVisitController::class, 'store'])->middleware('permission:site-visit-create');
+    Route::get('site-visits/{id}', [SiteVisitController::class, 'show'])->middleware('permission:site-visit-list');
+    Route::put('site-visits/{id}', [SiteVisitController::class, 'update'])->middleware('permission:site-visit-edit');
+    Route::delete('site-visits/{id}', [SiteVisitController::class, 'destroy'])->middleware('permission:site-visit-delete');
 });

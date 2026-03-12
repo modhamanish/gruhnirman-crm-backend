@@ -11,13 +11,13 @@ class LeadStatus extends Model
 
     protected $fillable = [
         'name',
+        'color',
+        'icon',
         'is_initial',
-        'is_final',
         'status',
     ];
 
     protected $casts = [
         'is_initial' => 'boolean',
-        'is_final' => 'boolean',
     ];
 }

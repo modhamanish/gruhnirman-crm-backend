@@ -60,8 +60,9 @@ class LeadStatusController extends Controller
                 required: ["name"],
                 properties: [
                     new OA\Property(property: "name", type: "string", example: "New Lead"),
+                    new OA\Property(property: "color", type: "string", example: "#FF0000"),
+                    new OA\Property(property: "icon", type: "string", example: "file-text"),
                     new OA\Property(property: "is_initial", type: "boolean", example: true),
-                    new OA\Property(property: "is_final", type: "boolean", example: false),
                     new OA\Property(property: "status", type: "string", enum: ["active", "inactive"], example: "active"),
                 ]
             )
@@ -75,8 +76,9 @@ class LeadStatusController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:lead_statuses,name',
+            'color' => 'nullable|string|max:50',
+            'icon' => 'nullable|string|max:255',
             'is_initial' => 'nullable|boolean',
-            'is_final' => 'nullable|boolean',
             'status' => 'nullable|in:active,inactive',
         ]);
 
@@ -144,8 +146,9 @@ class LeadStatusController extends Controller
                 required: ["name"],
                 properties: [
                     new OA\Property(property: "name", type: "string", example: "Qualified"),
+                    new OA\Property(property: "color", type: "string", example: "#00FF00"),
+                    new OA\Property(property: "icon", type: "string", example: "check-circle"),
                     new OA\Property(property: "is_initial", type: "boolean", example: false),
-                    new OA\Property(property: "is_final", type: "boolean", example: false),
                     new OA\Property(property: "status", type: "string", enum: ["active", "inactive"], example: "active"),
                 ]
             )
@@ -167,8 +170,9 @@ class LeadStatusController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:lead_statuses,name,' . $leadStatus->id,
+            'color' => 'nullable|string|max:50',
+            'icon' => 'nullable|string|max:255',
             'is_initial' => 'nullable|boolean',
-            'is_final' => 'nullable|boolean',
             'status' => 'nullable|in:active,inactive',
         ]);
 

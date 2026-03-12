@@ -63,4 +63,9 @@ class Property extends Model
         }
         return $this->brochure_url ?? '';
     }
+
+    public function siteVisits()
+    {
+        return $this->hasMany(SiteVisit::class);
+    }
 }
