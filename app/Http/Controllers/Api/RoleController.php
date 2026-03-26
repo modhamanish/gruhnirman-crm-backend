@@ -226,6 +226,15 @@ class RoleController extends Controller
     public function getPermissions()
     {
         $permissions = Permission::all();
+        foreach ($permissions as $permission) {
+            $group = explode('-', $permission->name);
+            if (count($group) > 1) {
+                $pName = $group[count($group) - 1];
+                $permission->display_name = ucfirst($pName);
+                $permission->tag = str_replace($pName, '', implode(' ', $group));
+            }
+        }
+        $permissions = $permissions->groupBy('tag');
         return response()->json([
             'status' => 'success',
             'results' => $permissions
