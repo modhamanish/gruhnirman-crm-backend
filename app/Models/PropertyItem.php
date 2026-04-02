@@ -13,6 +13,7 @@ class PropertyItem extends Model
         'property_id',
         'sq_feet',
         'price',
+        'label'
     ];
 
     public function property()

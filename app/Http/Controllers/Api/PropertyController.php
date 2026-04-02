@@ -114,6 +114,7 @@ class PropertyController extends Controller
                                 properties: [
                                     new OA\Property(property: "sq_feet", type: "string", example: "1000"),
                                     new OA\Property(property: "price", type: "number", format: "float", example: 5000000),
+                                    new OA\Property(property: "label", type: "string", example: "1BHK"),
                                 ]
                             )
                         ),
@@ -275,6 +276,7 @@ class PropertyController extends Controller
                                     new OA\Property(property: "id", type: "integer", example: 1),
                                     new OA\Property(property: "sq_feet", type: "string", example: "1200"),
                                     new OA\Property(property: "price", type: "number", format: "float", example: 6000000),
+                                    new OA\Property(property: "label", type: "string", example: "1BHK"),
                                 ]
                             )
                         ),
