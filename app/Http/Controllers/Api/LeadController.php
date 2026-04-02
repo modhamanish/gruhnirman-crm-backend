@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
+use App\Models\Property;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -272,5 +273,99 @@ class LeadController extends Controller
                 'message' => 'Lead not found'
             ], 404);
         }
+    }
+    #[OA\Get(
+        path: "/api/leads/{id}/suggested-properties",
+        summary: "Get suggested properties for a lead",
+        tags: ["Leads"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer"))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Success"),
+            new OA\Response(response: 404, description: "Not Found")
+        ]
+    )]
+    public function suggestedProperties($id)
+    {
+        $lead = Lead::find($id);
+        if (!$lead) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lead not found'
+            ], 404);
+        }
+
+        $lat = $lead->area_latitude;
+        $lon = $lead->area_longitude;
+        $minBudget = $lead->min_budget;
+        $maxBudget = $lead->max_budget;
+        $interestedArea = $lead->interested_area;
+
+        $query = Property::with(['builder', 'category', 'propertyType']);
+
+        // Distance select (if lat/lon available) - Using CAST for PostgreSQL compatibility
+        if ($lat && $lon) {
+            $query->selectRaw("*, ( 6371 * acos( LEAST(1.0, GREATEST(-1.0, cos( radians(CAST(? AS double precision)) ) * cos( radians( CAST(latitude AS double precision) ) ) * cos( radians( CAST(longitude AS double precision) ) - radians(CAST(? AS double precision)) ) + sin( radians(CAST(? AS double precision)) ) * sin( radians( CAST(latitude AS double precision) ) ) )) ) ) AS distance", [$lat, $lon, $lat]);
+        } else {
+            $query->select('*');
+        }
+
+        // 1. Category & Property Type filtering (already working)
+        if ($lead->category_id) {
+            $query->where('category_id', $lead->category_id);
+        }
+        if ($lead->property_type_id) {
+            $query->where('property_type_id', $lead->property_type_id);
+        }
+
+        // 2. Inquiry For basis (Optional: check if inquiry_for keyword matches property name/address)
+        // if ($lead->inquiry_for) {
+        //     $search = $lead->inquiry_for;
+        //     $query->where(function ($q) use ($search) {
+        //         // Using ILIKE for case-insensitive search in PostgreSQL
+        //         $q->where('name', 'ILIKE', "%{$search}%");
+        //     });
+        // }
+
+        // --- SORTING ---
+
+        // 1. Interested Area Matching (Properties in preferred area come first)
+        if ($interestedArea) {
+            // Using ILIKE for case-insensitive match in PostgreSQL
+            $query->orderByRaw("CASE WHEN address ILIKE ? THEN 0 ELSE 1 END", ["%{$interestedArea}%"]);
+        }
+
+        // 2. Latitude/Longitude (Distance based sorting)
+        if ($lat && $lon) {
+            $query->orderBy('distance', 'asc');
+        }
+
+        // 3. Budget based sorting (Overlap or proximity)
+        if ($minBudget || $maxBudget) {
+            if ($minBudget && $maxBudget) {
+                // Within range first
+                $query->orderByRaw("CASE WHEN starting_price <= ? AND (ending_price >= ? OR ending_price IS NULL) THEN 0 ELSE 1 END", [(float)$maxBudget, (float)$minBudget]);
+                // Proximity to average budget
+                $avgBudget = ($minBudget + $maxBudget) / 2;
+                $query->orderByRaw("ABS(starting_price - ?)", [$avgBudget]);
+            } elseif ($minBudget) {
+                $query->orderByRaw("CASE WHEN ending_price >= ? OR ending_price IS NULL THEN 0 ELSE 1 END", [(float)$minBudget]);
+                $query->orderByRaw("ABS(starting_price - ?)", [(float)$minBudget]);
+            } elseif ($maxBudget) {
+                $query->orderByRaw("CASE WHEN starting_price <= ? THEN 0 ELSE 1 END", [(float)$maxBudget]);
+                $query->orderByRaw("ABS(starting_price - ?)", [(float)$maxBudget]);
+            }
+        }
+
+        $query->orderBy('id', 'desc');
+
+        $properties = $query->get();
+
+        return response()->json([
+            'status' => 'success',
+            'results' => $properties
+        ]);
     }
 }

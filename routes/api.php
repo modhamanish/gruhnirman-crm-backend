@@ -79,6 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('leads', [LeadController::class, 'index'])->middleware('permission:lead-list');
     Route::post('leads', [LeadController::class, 'store'])->middleware('permission:lead-create');
     Route::get('leads/{lead}', [LeadController::class, 'show'])->middleware('permission:lead-list');
+    Route::get('leads/{id}/suggested-properties', [LeadController::class, 'suggestedProperties'])->middleware('permission:lead-list');
     Route::put('leads/{lead}', [LeadController::class, 'update'])->middleware('permission:lead-edit');
     Route::delete('leads/{lead}', [LeadController::class, 'destroy'])->middleware('permission:lead-delete');
 

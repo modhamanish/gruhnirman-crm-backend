@@ -1032,6 +1032,38 @@
                 ]
             }
         },
+        "/api/leads/{id}/suggested-properties": {
+            "get": {
+                "tags": [
+                    "Leads"
+                ],
+                "summary": "Get suggested properties for a lead",
+                "operationId": "749756a20746ff86508647eebfcdfa2a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/lead-sources": {
             "get": {
                 "tags": [
@@ -1712,6 +1744,10 @@
                                                     "type": "number",
                                                     "format": "float",
                                                     "example": 5000000
+                                                },
+                                                "label": {
+                                                    "type": "string",
+                                                    "example": "1BHK"
                                                 }
                                             },
                                             "type": "object"
@@ -1885,6 +1921,10 @@
                                                     "type": "number",
                                                     "format": "float",
                                                     "example": 6000000
+                                                },
+                                                "label": {
+                                                    "type": "string",
+                                                    "example": "1BHK"
                                                 }
                                             },
                                             "type": "object"
