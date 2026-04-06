@@ -2565,8 +2565,14 @@
                                         "example": 1
                                     },
                                     "unit_type": {
-                                        "type": "string",
-                                        "example": "3BHK Flat"
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
                                     },
                                     "visit_date": {
                                         "type": "string",
@@ -2688,8 +2694,14 @@
                                         "example": 1
                                     },
                                     "unit_type": {
-                                        "type": "string",
-                                        "example": "3BHK Flat"
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
                                     },
                                     "visit_date": {
                                         "type": "string",

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\PropertyItem;
 
 class SiteVisit extends Model
 {
@@ -19,6 +20,21 @@ class SiteVisit extends Model
         'notes',
         'added_by'
     ];
+
+    protected $casts = [
+        'unit_type' => 'array',
+    ];
+
+    protected $appends = ['property_unit_details'];
+
+    public function getPropertyUnitDetailsAttribute()
+    {
+        $unitIds = $this->unit_type;
+        if (is_array($unitIds)) {
+            return PropertyItem::whereIn('id', $unitIds)->get();
+        }
+        return [];
+    }
 
     public function lead()
     {
