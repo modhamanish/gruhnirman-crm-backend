@@ -171,7 +171,7 @@ class LeadController extends Controller
             // get next site visit
             $lead->next_site_visit = $lead->siteVisits()->where('visit_date', '>=', date('Y-m-d H:i:s'))->orderBy('visit_date', 'asc')->first();
             $lead->follow_ups_count = $lead->followUps()->count();
-            $lead->next_follow_up = $lead->followUps()->where('follow_up_date', '>=', date('Y-m-d H:i:s'))->orderBy('follow_up_date', 'asc')->first();
+            $lead->next_follow_up = $lead->followUps()->where('next_follow_up_date_time', '>=', date('Y-m-d H:i:s'))->orderBy('next_follow_up_date_time', 'asc')->first();
             return response()->json([
                 'status' => 'success',
                 'results' => $lead->load(['category', 'propertyType', 'leadStatus', 'leadSource', 'assignedTo', 'creator'])
