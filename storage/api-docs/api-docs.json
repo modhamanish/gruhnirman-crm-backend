@@ -681,6 +681,657 @@
                 ]
             }
         },
+        "/api/follow-ups": {
+            "get": {
+                "tags": [
+                    "Follow Ups"
+                ],
+                "summary": "Get all follow ups",
+                "operationId": "af01d02c70c0fa5ea5ea158965b8a78e",
+                "parameters": [
+                    {
+                        "name": "lead_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "Current Only",
+                                "Both",
+                                "Next Only"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Follow Ups"
+                ],
+                "summary": "Create a new follow up",
+                "operationId": "e061d3112ff1088749490e8ac8ad9759",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "lead_id",
+                                    "user_id",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "lead_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Current Only",
+                                            "Both",
+                                            "Next Only"
+                                        ],
+                                        "example": "Current Only"
+                                    },
+                                    "follow_up_type": {
+                                        "type": "string",
+                                        "example": "Call"
+                                    },
+                                    "interaction_date_time": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-04-06 18:13:00"
+                                    },
+                                    "duration": {
+                                        "type": "string",
+                                        "example": "05:20"
+                                    },
+                                    "recording_link": {
+                                        "type": "string",
+                                        "example": "https://example.com/recording.mp3"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Discussed project pricing"
+                                    },
+                                    "next_follow_up_date_time": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-04-10 10:00:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/follow-ups/{id}": {
+            "get": {
+                "tags": [
+                    "Follow Ups"
+                ],
+                "summary": "Get follow up details",
+                "operationId": "cec01a21ecc43c37c1cc8525409812d3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Follow Ups"
+                ],
+                "summary": "Update follow up",
+                "operationId": "e711b2c1d80780f48c4f407cea2a36b9",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "lead_id",
+                                    "user_id",
+                                    "type"
+                                ],
+                                "properties": {
+                                    "lead_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "Current Only",
+                                            "Both",
+                                            "Next Only"
+                                        ],
+                                        "example": "Current Only"
+                                    },
+                                    "follow_up_type": {
+                                        "type": "string",
+                                        "example": "Call"
+                                    },
+                                    "interaction_date_time": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-04-06 18:13:00"
+                                    },
+                                    "duration": {
+                                        "type": "string",
+                                        "example": "05:20"
+                                    },
+                                    "recording_link": {
+                                        "type": "string",
+                                        "example": "https://example.com/recording.mp3"
+                                    },
+                                    "notes": {
+                                        "type": "string",
+                                        "example": "Discussed project pricing"
+                                    },
+                                    "next_follow_up_date_time": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-04-10 10:00:00"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Follow Ups"
+                ],
+                "summary": "Delete follow up",
+                "operationId": "26d8a1786b43548dec6c6f9f4c2390d2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/inquiry": {
+            "get": {
+                "tags": [
+                    "Inquiry"
+                ],
+                "summary": "Get all inquiry",
+                "operationId": "1cbc09d81c73bf1f6bfd8b581cdcde24",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "property_type_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "lead_source_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "assigned_to",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Inquiry"
+                ],
+                "summary": "Create a new inquiry",
+                "operationId": "8e4d2f13420cf15cffdcd4f9f2746a4d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "contact_number",
+                                    "category_id",
+                                    "property_type_id",
+                                    "lead_status_id",
+                                    "lead_source_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "cast": {
+                                        "type": "string",
+                                        "example": "Patel"
+                                    },
+                                    "contact_number": {
+                                        "type": "string",
+                                        "example": "9876543210"
+                                    },
+                                    "inquiry_for": {
+                                        "type": "string",
+                                        "example": "3BHK Flat"
+                                    },
+                                    "interested_area": {
+                                        "type": "string",
+                                        "example": "Raiya Road"
+                                    },
+                                    "min_budget": {
+                                        "type": "string",
+                                        "example": "5000000"
+                                    },
+                                    "max_budget": {
+                                        "type": "string",
+                                        "example": "6000000"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "property_type_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "lead_source_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "assigned_to": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/inquiry/{id}": {
+            "get": {
+                "tags": [
+                    "Inquiry"
+                ],
+                "summary": "Get inquiry details",
+                "operationId": "fdb88acd0ef8e25877471e7bf7d59006",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Inquiry"
+                ],
+                "summary": "Update inquiry",
+                "operationId": "11427c077cd525380202428352ec3943",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "contact_number",
+                                    "category_id",
+                                    "property_type_id",
+                                    "lead_status_id",
+                                    "lead_source_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "cast": {
+                                        "type": "string",
+                                        "example": "Patel"
+                                    },
+                                    "contact_number": {
+                                        "type": "string",
+                                        "example": "9876543210"
+                                    },
+                                    "inquiry_for": {
+                                        "type": "string",
+                                        "example": "3BHK Flat"
+                                    },
+                                    "interested_area": {
+                                        "type": "string",
+                                        "example": "Raiya Road"
+                                    },
+                                    "min_budget": {
+                                        "type": "string",
+                                        "example": "5000000"
+                                    },
+                                    "max_budget": {
+                                        "type": "string",
+                                        "example": "6000000"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "property_type_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "lead_source_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "assigned_to": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Inquiry"
+                ],
+                "summary": "Delete inquiry",
+                "operationId": "835191fb52d286009277dd983db064e1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/inquiries/{id}/convert": {
+            "post": {
+                "tags": [
+                    "Inquiry"
+                ],
+                "summary": "Convert inquiry to lead",
+                "operationId": "d6aff7f7c8e9c3f7814db5a082137496",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Converted"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/leads": {
             "get": {
                 "tags": [
@@ -3033,6 +3684,14 @@
         {
             "name": "Categories",
             "description": "Categories"
+        },
+        {
+            "name": "Follow Ups",
+            "description": "Follow Ups"
+        },
+        {
+            "name": "Inquiry",
+            "description": "Inquiry"
         },
         {
             "name": "Leads",
