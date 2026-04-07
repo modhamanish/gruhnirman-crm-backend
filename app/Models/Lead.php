@@ -61,4 +61,9 @@ class Lead extends Model
     {
         return $this->hasMany(SiteVisit::class);
     }
+
+    public function followUps()
+    {
+        return $this->hasMany(FollowUp::class);
+    }
 }

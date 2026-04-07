@@ -77,6 +77,10 @@ class RoleAndPermissionSeeder extends Seeder
             'site-visit-create',
             'site-visit-edit',
             'site-visit-delete',
+            'follow-up-list',
+            'follow-up-create',
+            'follow-up-edit',
+            'follow-up-delete',
         ];
 
         foreach ($permissions as $permission) {

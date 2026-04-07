@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\LeadSourceController;
 use App\Http\Controllers\Api\LeadStatusController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\SiteVisitController;
+use App\Http\Controllers\Api\FollowUpController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -89,4 +90,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('site-visits/{id}', [SiteVisitController::class, 'show'])->middleware('permission:site-visit-list');
     Route::put('site-visits/{id}', [SiteVisitController::class, 'update'])->middleware('permission:site-visit-edit');
     Route::delete('site-visits/{id}', [SiteVisitController::class, 'destroy'])->middleware('permission:site-visit-delete');
+
+    // Follow Up Management
+    Route::get('follow-ups', [FollowUpController::class, 'index'])->middleware('permission:follow-up-list');
+    Route::post('follow-ups', [FollowUpController::class, 'store'])->middleware('permission:follow-up-create');
+    Route::get('follow-ups/{id}', [FollowUpController::class, 'show'])->middleware('permission:follow-up-list');
+    Route::put('follow-ups/{id}', [FollowUpController::class, 'update'])->middleware('permission:follow-up-edit');
+    Route::delete('follow-ups/{id}', [FollowUpController::class, 'destroy'])->middleware('permission:follow-up-delete');
 });
