@@ -81,6 +81,11 @@ class RoleAndPermissionSeeder extends Seeder
             'follow-up-create',
             'follow-up-edit',
             'follow-up-delete',
+            'inquiry-list',
+            'inquiry-create',
+            'inquiry-edit',
+            'inquiry-delete',
+            'inquiry-convert-to-lead',
         ];
 
         foreach ($permissions as $permission) {

@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\LeadStatusController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\SiteVisitController;
 use App\Http\Controllers\Api\FollowUpController;
+use App\Http\Controllers\Api\InquiryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -97,4 +98,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('follow-ups/{id}', [FollowUpController::class, 'show'])->middleware('permission:follow-up-list');
     Route::put('follow-ups/{id}', [FollowUpController::class, 'update'])->middleware('permission:follow-up-edit');
     Route::delete('follow-ups/{id}', [FollowUpController::class, 'destroy'])->middleware('permission:follow-up-delete');
+
+    // Inquiry Management
+    Route::get('inquiries', [InquiryController::class, 'index'])->middleware('permission:inquiry-list');
+    Route::post('inquiries', [InquiryController::class, 'store'])->middleware('permission:inquiry-create');
+    Route::get('inquiries/{id}', [InquiryController::class, 'show'])->middleware('permission:inquiry-list');
+    Route::put('inquiries/{id}', [InquiryController::class, 'update'])->middleware('permission:inquiry-edit');
+    Route::delete('inquiries/{id}', [InquiryController::class, 'destroy'])->middleware('permission:inquiry-delete');
+    Route::post('inquiries/{id}/convert', [InquiryController::class, 'convertToLead'])->middleware('permission:inquiry-convert-to-lead');
 });

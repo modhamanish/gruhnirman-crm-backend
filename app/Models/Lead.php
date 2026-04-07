@@ -25,6 +25,7 @@ class Lead extends Model
         'lead_source_id',
         'assigned_to',
         'created_by',
+        'type',
     ];
 
     public function category()
