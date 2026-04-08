@@ -64,4 +64,9 @@ class User extends Authenticatable
         }
         return '';
     }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
 }

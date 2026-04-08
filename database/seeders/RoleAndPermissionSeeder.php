@@ -86,6 +86,10 @@ class RoleAndPermissionSeeder extends Seeder
             'inquiry-edit',
             'inquiry-delete',
             'inquiry-convert-to-lead',
+            'attendance-list',
+            'attendance-create',
+            'attendance-edit',
+            'attendance-delete',
         ];
 
         foreach ($permissions as $permission) {

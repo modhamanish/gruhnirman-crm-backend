@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Api\SiteVisitController;
 use App\Http\Controllers\Api\FollowUpController;
 use App\Http\Controllers\Api\InquiryController;
+use App\Http\Controllers\Api\AttendanceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -106,4 +107,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('inquiries/{id}', [InquiryController::class, 'update'])->middleware('permission:inquiry-edit');
     Route::delete('inquiries/{id}', [InquiryController::class, 'destroy'])->middleware('permission:inquiry-delete');
     Route::post('inquiries/{id}/convert', [InquiryController::class, 'convertToLead'])->middleware('permission:inquiry-convert-to-lead');
+
+    // Attendance Management
+    Route::get('attendances', [AttendanceController::class, 'index'])->middleware('permission:attendance-list');
+    Route::get('attendances/today-status', [AttendanceController::class, 'todayStatus']);
+    Route::post('attendances/check-in', [AttendanceController::class, 'checkIn']);
+    Route::post('attendances/break-start', [AttendanceController::class, 'breakStart']);
+    Route::post('attendances/break-end', [AttendanceController::class, 'breakEnd']);
+    Route::post('attendances/check-out', [AttendanceController::class, 'checkOut']);
 });
