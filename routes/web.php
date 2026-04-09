@@ -22,7 +22,7 @@ Route::get('cache-clear', function () {
     Artisan::call('config:clear');
     Artisan::call('route:clear');
 
-    echo "Cache Clear successfully";
+    return "Cache Clear successfully";
 });
 
 Route::get('/generate-swagger', function () {
