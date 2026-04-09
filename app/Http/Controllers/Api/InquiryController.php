@@ -14,7 +14,7 @@ use OpenApi\Attributes as OA;
 class InquiryController extends Controller
 {
     #[OA\Get(
-        path: "/api/inquiry",
+        path: "/api/inquiries",
         summary: "Get all inquiry",
         tags: ["Inquiry"],
         security: [["bearerAuth" => []]],
@@ -78,7 +78,7 @@ class InquiryController extends Controller
 
 
     #[OA\Post(
-        path: "/api/inquiry",
+        path: "/api/inquiries",
         summary: "Create a new inquiry",
         tags: ["Inquiry"],
         security: [["bearerAuth" => []]],
@@ -158,7 +158,7 @@ class InquiryController extends Controller
     }
 
     #[OA\Get(
-        path: "/api/inquiry/{id}",
+        path: "/api/inquiries/{id}",
         summary: "Get inquiry details",
         tags: ["Inquiry"],
         security: [["bearerAuth" => []]],
@@ -198,7 +198,7 @@ class InquiryController extends Controller
     }
 
     #[OA\Put(
-        path: "/api/inquiry/{id}",
+        path: "/api/inquiries/{id}",
         summary: "Update inquiry",
         tags: ["Inquiry"],
         security: [["bearerAuth" => []]],
@@ -279,7 +279,7 @@ class InquiryController extends Controller
     }
 
     #[OA\Delete(
-        path: "/api/inquiry/{id}",
+        path: "/api/inquiries/{id}",
         summary: "Delete inquiry",
         tags: ["Inquiry"],
         security: [["bearerAuth" => []]],
