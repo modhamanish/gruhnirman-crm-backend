@@ -21,7 +21,6 @@ Route::get('cache-clear', function () {
     Artisan::call('optimize:clear');
     Artisan::call('config:clear');
     Artisan::call('route:clear');
-
     return "Cache Clear successfully";
 });
 
