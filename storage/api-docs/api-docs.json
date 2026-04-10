@@ -12,6 +12,266 @@
         }
     ],
     "paths": {
+        "/api/attendances": {
+            "get": {
+                "tags": [
+                    "Attendance"
+                ],
+                "summary": "Get attendance list",
+                "operationId": "57cd91ddd513b3298d731adc13ba7560",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/attendances/{id}": {
+            "get": {
+                "tags": [
+                    "Attendance"
+                ],
+                "summary": "Get attendance details with logs",
+                "operationId": "a71023f5c8c3443d5396f2dd0af2d0dd",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/attendances/today-status": {
+            "get": {
+                "tags": [
+                    "Attendance"
+                ],
+                "summary": "Get today's attendance status for a user",
+                "operationId": "52f50f49a7c99e367de680949f27a47e",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/attendances/check-in": {
+            "post": {
+                "tags": [
+                    "Attendance"
+                ],
+                "summary": "Mark check-in",
+                "operationId": "cd659c287d106562fad023b8ad183d1c",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "422": {
+                        "description": "Validation Error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/attendances/break-start": {
+            "post": {
+                "tags": [
+                    "Attendance"
+                ],
+                "summary": "Start break",
+                "operationId": "b4d990ece32fe3d06b65efcad0904a1d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/attendances/break-end": {
+            "post": {
+                "tags": [
+                    "Attendance"
+                ],
+                "summary": "End break",
+                "operationId": "3ad5dcbba8c4e64b1293e722aaa13492",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/attendances/check-out": {
+            "post": {
+                "tags": [
+                    "Attendance"
+                ],
+                "summary": "Mark check-out",
+                "operationId": "3cdb7b994d68c55886732da1b8f8bb74",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/login": {
             "post": {
                 "tags": [
@@ -981,13 +1241,13 @@
                 ]
             }
         },
-        "/api/inquiry": {
+        "/api/inquiries": {
             "get": {
                 "tags": [
                     "Inquiry"
                 ],
                 "summary": "Get all inquiry",
-                "operationId": "1cbc09d81c73bf1f6bfd8b581cdcde24",
+                "operationId": "b5a106c33367085c4771537236b84b6d",
                 "parameters": [
                     {
                         "name": "search",
@@ -1064,7 +1324,7 @@
                     "Inquiry"
                 ],
                 "summary": "Create a new inquiry",
-                "operationId": "8e4d2f13420cf15cffdcd4f9f2746a4d",
+                "operationId": "faf42b4e51cdef6f5020b15879f9d196",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -1144,13 +1404,13 @@
                 ]
             }
         },
-        "/api/inquiry/{id}": {
+        "/api/inquiries/{id}": {
             "get": {
                 "tags": [
                     "Inquiry"
                 ],
                 "summary": "Get inquiry details",
-                "operationId": "fdb88acd0ef8e25877471e7bf7d59006",
+                "operationId": "c67737b7e48cbb4cf6fac420469c5b63",
                 "parameters": [
                     {
                         "name": "id",
@@ -1180,7 +1440,7 @@
                     "Inquiry"
                 ],
                 "summary": "Update inquiry",
-                "operationId": "11427c077cd525380202428352ec3943",
+                "operationId": "26d31263059b71bfc5cee4665eb2d51f",
                 "parameters": [
                     {
                         "name": "id",
@@ -1274,7 +1534,7 @@
                     "Inquiry"
                 ],
                 "summary": "Delete inquiry",
-                "operationId": "835191fb52d286009277dd983db064e1",
+                "operationId": "9524629ca7cccfde62932a2449272f5c",
                 "parameters": [
                     {
                         "name": "id",
@@ -3673,6 +3933,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Attendance",
+            "description": "Attendance"
+        },
         {
             "name": "Authentication",
             "description": "Authentication"

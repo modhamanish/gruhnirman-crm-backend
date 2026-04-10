@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\AttendanceLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
@@ -47,6 +48,28 @@ class AttendanceController extends Controller
     }
 
     #[OA\Get(
+        path: "/api/attendances/{id}",
+        summary: "Get attendance details with logs",
+        tags: ["Attendance"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer")),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Success")
+        ]
+    )]
+    public function show($id)
+    {
+        $attendance = Attendance::with(['user', 'logs'])->findOrFail($id);
+
+        return response()->json([
+            'status' => 'success',
+            'results' => $attendance
+        ]);
+    }
+
+    #[OA\Get(
         path: "/api/attendances/today-status",
         summary: "Get today's attendance status for a user",
         tags: ["Attendance"],
@@ -68,7 +91,7 @@ class AttendanceController extends Controller
             return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
         }
 
-        $attendance = Attendance::where('user_id', $request->user_id)
+        $attendance = Attendance::with('logs')->where('user_id', $request->user_id)
             ->where('date', Carbon::today()->toDateString())
             ->first();
 
@@ -117,14 +140,19 @@ class AttendanceController extends Controller
         $attendance = Attendance::create([
             'user_id' => $request->user_id,
             'date' => $today,
-            'check_in' => Carbon::now()->toTimeString(),
             'status' => 'checked_in'
+        ]);
+
+        AttendanceLog::create([
+            'attendance_id' => $attendance->id,
+            'status' => 'checked_in',
+            'log_time' => Carbon::now()->toTimeString()
         ]);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Checked in successfully',
-            'results' => $attendance
+            'results' => $attendance->load('logs')
         ]);
     }
 
@@ -165,14 +193,19 @@ class AttendanceController extends Controller
         }
 
         $attendance->update([
-            'break_start' => Carbon::now()->toTimeString(),
             'status' => 'on_break'
+        ]);
+
+        AttendanceLog::create([
+            'attendance_id' => $attendance->id,
+            'status' => 'on_break',
+            'log_time' => Carbon::now()->toTimeString()
         ]);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Break started',
-            'results' => $attendance
+            'results' => $attendance->load('logs')
         ]);
     }
 
@@ -204,24 +237,22 @@ class AttendanceController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Not on break'], 422);
         }
 
-        $now = Carbon::now();
-        $breakStart = Carbon::parse($attendance->break_start);
-        $durationSeconds = $now->diffInSeconds($breakStart);
-
-        // Accumulate break hours? For now assuming 1 break.
-        // If we want multiple breaks, we need a separate table.
-        // But per requirements "break, break end", I'll just store this one.
-
         $attendance->update([
-            'break_end' => $now->toTimeString(),
-            'total_break_hours' => gmdate("H:i:s", $durationSeconds),
             'status' => 'checked_in'
         ]);
+
+        AttendanceLog::create([
+            'attendance_id' => $attendance->id,
+            'status' => 'checked_in',
+            'log_time' => Carbon::now()->toTimeString()
+        ]);
+
+        $this->calculateTotals($attendance);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Break ended',
-            'results' => $attendance
+            'results' => $attendance->load('logs')
         ]);
     }
 
@@ -257,31 +288,75 @@ class AttendanceController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Already checked out'], 422);
         }
 
-        $now = Carbon::now();
-        $checkIn = Carbon::parse($attendance->check_in);
-
-        // Calculate total time
-        $totalSeconds = $now->diffInSeconds($checkIn);
-
-        // Substract break time if exists
-        $breakSeconds = 0;
-        if ($attendance->total_break_hours) {
-            $parts = explode(':', $attendance->total_break_hours);
-            $breakSeconds = ($parts[0] * 3600) + ($parts[1] * 60) + $parts[2];
-        }
-
-        $workingSeconds = $totalSeconds - $breakSeconds;
-
         $attendance->update([
-            'check_out' => $now->toTimeString(),
-            'total_working_hours' => gmdate("H:i:s", $workingSeconds),
             'status' => 'checked_out'
         ]);
+
+        AttendanceLog::create([
+            'attendance_id' => $attendance->id,
+            'status' => 'checked_out',
+            'log_time' => Carbon::now()->toTimeString()
+        ]);
+
+        $this->calculateTotals($attendance);
 
         return response()->json([
             'status' => 'success',
             'message' => 'Checked out successfully',
-            'results' => $attendance
+            'results' => $attendance->load('logs')
         ]);
+    }
+
+    private function calculateTotals($attendance)
+    {
+        $logs = $attendance->logs()->orderBy('id', 'asc')->get();
+
+        $totalBreakSeconds = 0;
+        $firstCheckIn = null;
+        $lastCheckOut = null;
+
+        $breakStart = null;
+
+        foreach ($logs as $log) {
+            $currentTime = Carbon::parse($attendance->date . ' ' . $log->log_time);
+
+            if ($log->status === 'checked_in') {
+                if ($firstCheckIn === null) {
+                    $firstCheckIn = $currentTime;
+                }
+                // If we were on break, add duration to totalBreakSeconds
+                if ($breakStart !== null) {
+                    $totalBreakSeconds += abs($currentTime->diffInSeconds($breakStart));
+                    $breakStart = null;
+                }
+            } elseif ($log->status === 'on_break') {
+                $breakStart = $currentTime;
+            } elseif ($log->status === 'checked_out') {
+                $lastCheckOut = $currentTime;
+                // If checking out while on break, close the break
+                if ($breakStart !== null) {
+                    $totalBreakSeconds += abs($currentTime->diffInSeconds($breakStart));
+                    $breakStart = null;
+                }
+            }
+        }
+
+        if ($firstCheckIn !== null) {
+            $endPoint = $lastCheckOut ?? Carbon::now();
+            $totalWorkingSeconds = abs($endPoint->diffInSeconds($firstCheckIn)) - $totalBreakSeconds;
+
+            $attendance->update([
+                'total_working_hours' => $this->formatDuration(max(0, $totalWorkingSeconds)),
+                'total_break_hours' => $this->formatDuration($totalBreakSeconds),
+            ]);
+        }
+    }
+
+    private function formatDuration($seconds)
+    {
+        $h = floor($seconds / 3600);
+        $m = floor(($seconds % 3600) / 60);
+        $s = $seconds % 60;
+        return sprintf('%02d:%02d:%02d', $h, $m, $s);
     }
 }

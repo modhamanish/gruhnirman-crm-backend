@@ -111,6 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Attendance Management
     Route::get('attendances', [AttendanceController::class, 'index'])->middleware('permission:attendance-list');
     Route::get('attendances/today-status', [AttendanceController::class, 'todayStatus']);
+    Route::get('attendances/{id}', [AttendanceController::class, 'show'])->middleware('permission:attendance-list');
     Route::post('attendances/check-in', [AttendanceController::class, 'checkIn']);
     Route::post('attendances/break-start', [AttendanceController::class, 'breakStart']);
     Route::post('attendances/break-end', [AttendanceController::class, 'breakEnd']);
