@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\SiteVisitController;
 use App\Http\Controllers\Api\FollowUpController;
 use App\Http\Controllers\Api\InquiryController;
 use App\Http\Controllers\Api\AttendanceController;
+use App\Http\Controllers\Api\LeadActivityController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -83,6 +84,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('leads', [LeadController::class, 'store'])->middleware('permission:lead-create');
     Route::get('leads/{lead}', [LeadController::class, 'show'])->middleware('permission:lead-list');
     Route::get('leads/{id}/suggested-properties', [LeadController::class, 'suggestedProperties'])->middleware('permission:lead-list');
+    Route::get('leads/{id}/activities', [LeadController::class, 'activities'])->middleware('permission:lead-list');
     Route::put('leads/{lead}', [LeadController::class, 'update'])->middleware('permission:lead-edit');
     Route::delete('leads/{lead}', [LeadController::class, 'destroy'])->middleware('permission:lead-delete');
 
@@ -116,4 +118,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('attendances/break-start', [AttendanceController::class, 'breakStart']);
     Route::post('attendances/break-end', [AttendanceController::class, 'breakEnd']);
     Route::post('attendances/check-out', [AttendanceController::class, 'checkOut']);
+
+    // Global Activity Logs
+    Route::get('activities', [LeadActivityController::class, 'index'])->middleware('permission:lead-list');
 });

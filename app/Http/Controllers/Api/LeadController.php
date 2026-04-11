@@ -388,4 +388,38 @@ class LeadController extends Controller
             'results' => $properties
         ]);
     }
+
+    #[OA\Get(
+        path: "/api/leads/{id}/activities",
+        summary: "Get lead activity logs",
+        tags: ["Leads"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "id", in: "path", required: true, schema: new OA\Schema(type: "integer"))
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Success"),
+            new OA\Response(response: 404, description: "Not Found")
+        ]
+    )]
+    public function activities($id)
+    {
+        $lead = Lead::find($id);
+        if (!$lead) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lead not found'
+            ], 404);
+        }
+
+        $activities = \App\Models\LeadActivity::with('user')
+            ->where('lead_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'results' => $activities
+        ]);
+    }
 }

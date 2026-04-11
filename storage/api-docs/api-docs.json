@@ -1592,6 +1592,66 @@
                 ]
             }
         },
+        "/api/activities": {
+            "get": {
+                "tags": [
+                    "Activities"
+                ],
+                "summary": "Get all activity logs with filtering",
+                "operationId": "26d72590ea01a7a8bc2d02b17b30d354",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "inquiry",
+                                "lead",
+                                "follow_up",
+                                "site_visit"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "lead_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/leads": {
             "get": {
                 "tags": [
@@ -1950,6 +2010,38 @@
                 ],
                 "summary": "Get suggested properties for a lead",
                 "operationId": "749756a20746ff86508647eebfcdfa2a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/leads/{id}/activities": {
+            "get": {
+                "tags": [
+                    "Leads"
+                ],
+                "summary": "Get lead activity logs",
+                "operationId": "55bcf46a08081f55fc0143f13082bc51",
                 "parameters": [
                     {
                         "name": "id",
@@ -3956,6 +4048,10 @@
         {
             "name": "Inquiry",
             "description": "Inquiry"
+        },
+        {
+            "name": "Activities",
+            "description": "Activities"
         },
         {
             "name": "Leads",
