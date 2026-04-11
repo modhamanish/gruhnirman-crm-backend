@@ -13,6 +13,7 @@ class FollowUp extends Model
         'lead_id',
         'user_id',
         'type',
+        'status',
         'follow_up_type',
         'interaction_date_time',
         'duration',

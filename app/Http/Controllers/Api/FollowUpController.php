@@ -104,19 +104,24 @@ class FollowUpController extends Controller
 
         // If type is Both, we store the current interaction and also create a separate Next Only record if date is provided
         if ($data['type'] === 'Both') {
-            // Store the record with both details (as presented in the form)
-            $followUp = FollowUp::create($data);
+            // First record (Current Interaction) - status is 'complete'
+            $currentData = $data;
+            $currentData['status'] = 'complete';
+            $followUp = FollowUp::create($currentData);
 
-            // If next date is not empty, create a separate record for the next follow up (Image 3 fields)
+            // Second record (Next Follow Up) - status is 'schedule'
             if (!empty($request->next_follow_up_date_time)) {
                 FollowUp::create([
                     'lead_id' => $data['lead_id'],
                     'user_id' => $data['user_id'],
                     'type' => 'Next Only',
+                    'status' => 'schedule',
                     'next_follow_up_date_time' => $request->next_follow_up_date_time,
                 ]);
             }
         } elseif ($data['type'] === 'Next Only') {
+            // Status is 'schedule' for Next Only
+            $data['status'] = 'schedule';
             // Nullify current interaction fields for Next Only
             $data['follow_up_type'] = null;
             $data['interaction_date_time'] = null;
@@ -125,6 +130,8 @@ class FollowUpController extends Controller
             $data['notes'] = null;
             $followUp = FollowUp::create($data);
         } else { // Current Only
+            // Status is 'complete' for Current Only
+            $data['status'] = 'complete';
             // Nullify next follow up for Current Only
             $data['next_follow_up_date_time'] = null;
             $followUp = FollowUp::create($data);
