@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Attendance;
 use App\Models\AttendanceLog;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -32,8 +33,9 @@ Route::get('/generate-swagger', function () {
 });
 
 Route::get('/remove-attendance-logs', function (Request $request) {
-    $attendanceLogs = AttendanceLog::where('user_id', $request->user_id)->get();
+    $attendanceLogs = Attendance::where('user_id', $request->user_id)->get();
     foreach ($attendanceLogs as $attendanceLog) {
+        $attendanceLog->logs()->delete();
         $attendanceLog->delete();
     }
     return "Attendance logs removed successfully!";
