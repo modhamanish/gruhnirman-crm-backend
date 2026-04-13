@@ -32,6 +32,9 @@ Route::get('/generate-swagger', function () {
 });
 
 Route::get('/remove-attendance-logs', function (Request $request) {
-    AttendanceLog::where('user_id', $request->user_id)->delete();
+    $attendanceLogs = AttendanceLog::where('user_id', $request->user_id)->get();
+    foreach ($attendanceLogs as $attendanceLog) {
+        $attendanceLog->delete();
+    }
     return "Attendance logs removed successfully!";
 });
