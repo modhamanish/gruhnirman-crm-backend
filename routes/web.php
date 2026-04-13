@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\AttendanceLog;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,4 +29,9 @@ Route::get('cache-clear', function () {
 Route::get('/generate-swagger', function () {
     Artisan::call('l5-swagger:generate');
     return "Swagger generated successfully!";
+});
+
+Route::get('/remove-attendance-logs', function (Request $request) {
+    AttendanceLog::where('user_id', $request->user_id)->delete();
+    return "Attendance logs removed successfully!";
 });
