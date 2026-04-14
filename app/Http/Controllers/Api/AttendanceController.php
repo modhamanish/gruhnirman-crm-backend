@@ -28,7 +28,7 @@ class AttendanceController extends Controller
     )]
     public function index(Request $request)
     {
-        $query = Attendance::with('user');
+        $query = Attendance::with(['user', 'logs']);
 
         if ($request->has('user_id')) {
             $query->where('user_id', $request->user_id);
