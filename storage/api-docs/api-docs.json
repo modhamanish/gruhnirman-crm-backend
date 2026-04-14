@@ -941,6 +941,25 @@
                 ]
             }
         },
+        "/api/dashboard/lead-stats": {
+            "get": {
+                "tags": [
+                    "Dashboard"
+                ],
+                "summary": "Get lead statistics for dashboard",
+                "operationId": "37b9789c498594a0ea94f34142ad3805",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/follow-ups": {
             "get": {
                 "tags": [
@@ -4040,6 +4059,10 @@
         {
             "name": "Categories",
             "description": "Categories"
+        },
+        {
+            "name": "Dashboard",
+            "description": "Dashboard"
         },
         {
             "name": "Follow Ups",

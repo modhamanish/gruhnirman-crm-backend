@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\FollowUpController;
 use App\Http\Controllers\Api\InquiryController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\LeadActivityController;
+use App\Http\Controllers\Api\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -121,4 +122,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Global Activity Logs
     Route::get('activities', [LeadActivityController::class, 'index'])->middleware('permission:lead-list');
+
+    // Dashboard Stats
+    Route::get('dashboard/lead-stats', [DashboardController::class, 'leadStats']);
+    Route::get('dashboard/conversion-stats', [DashboardController::class, 'conversionStats']);
 });
