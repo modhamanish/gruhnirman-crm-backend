@@ -101,6 +101,43 @@ class AttendanceController extends Controller
         ]);
     }
 
+    #[OA\Get(
+        path: "/api/attendances/weekly-record",
+        summary: "Get weekly attendance record for a user",
+        tags: ["Attendance"],
+        security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "user_id", in: "query", required: true, schema: new OA\Schema(type: "integer")),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: "Success")
+        ]
+    )]
+    public function weeklyRecord(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => 'error', 'errors' => $validator->errors()], 422);
+        }
+
+        $startDate = $request->start_date;
+        $endDate = $request->end_date;
+
+        $attendances = Attendance::with('logs')
+            ->where('user_id', $request->user_id)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'results' => $attendances
+        ]);
+    }
+
     #[OA\Post(
         path: "/api/attendances/check-in",
         summary: "Mark check-in",
