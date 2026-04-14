@@ -108,6 +108,8 @@ class AttendanceController extends Controller
         security: [["bearerAuth" => []]],
         parameters: [
             new OA\Parameter(name: "user_id", in: "query", required: true, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "start_date", in: "query", required: true, schema: new OA\Schema(type: "string", format: "date")),
+            new OA\Parameter(name: "end_date", in: "query", required: true, schema: new OA\Schema(type: "string", format: "date")),
         ],
         responses: [
             new OA\Response(response: 200, description: "Success")
