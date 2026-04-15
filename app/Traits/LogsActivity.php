@@ -72,7 +72,11 @@ trait LogsActivity
     {
         $resolved = [];
         foreach ($values as $key => $value) {
-            $resolved[$key] = $this->resolveValueLabel($key, $value);
+            // Remove _id suffix and replace underscores with spaces
+            $newKey = str_ends_with($key, '_id') ? substr($key, 0, -3) : $key;
+            $newKey = str_replace('_', ' ', $newKey);
+
+            $resolved[$newKey] = $this->resolveValueLabel($key, $value);
         }
         return $resolved;
     }
@@ -85,19 +89,8 @@ trait LogsActivity
         }
 
         if ($type === 'updated' && !empty($newValues)) {
-            $details = [];
-            foreach ($newValues as $key => $value) {
-                // If id or timestamps somehow got here, ignore them
-                if (in_array($key, ['updated_at', 'created_at', 'id'])) continue;
-
-                $label = ucwords(str_replace('_', ' ', $key));
-                $oldValue = $oldValues[$key] ?? 'N/A';
-
-                $details[] = "{$label} changed from '{$oldValue}' to '{$value}'";
-            }
-            if (!empty($details)) {
-                return "{$modelName} updated: " . implode(', ', $details);
-            }
+            // $fields = implode(', ', array_keys($newValues));
+            return "{$modelName} updated";
         }
 
         return "{$modelName} has been {$type}";
