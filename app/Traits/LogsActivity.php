@@ -52,37 +52,48 @@ trait LogsActivity
             return;
         }
 
+        // Resolve labels for storage and description
+        $resolvedNewValues = $newValues ? $this->resolveArrayLabels($newValues) : null;
+        $resolvedOldValues = $oldValues ? $this->resolveArrayLabels($oldValues) : null;
+
         LeadActivity::create([
             'lead_id' => $leadId,
             'user_id' => Auth::id(),
             'loggable_type' => get_class($this),
             'loggable_id' => $this->id,
             'activity_type' => $type,
-            'description' => $this->getActivityDescription($type, $newValues),
-            'old_values' => $oldValues,
-            'new_values' => $newValues,
+            'description' => $this->getActivityDescription($type, $resolvedNewValues, $resolvedOldValues),
+            'old_values' => $resolvedOldValues,
+            'new_values' => $resolvedNewValues,
         ]);
     }
 
-    protected function getActivityDescription($type, $changes = [])
+    protected function resolveArrayLabels($values)
+    {
+        $resolved = [];
+        foreach ($values as $key => $value) {
+            $resolved[$key] = $this->resolveValueLabel($key, $value);
+        }
+        return $resolved;
+    }
+
+    protected function getActivityDescription($type, $newValues = [], $oldValues = [])
     {
         $modelName = class_basename($this);
         if ($modelName === 'Lead' && $this->type === 'inquiry') {
             $modelName = 'Inquiry';
         }
 
-        if ($type === 'updated' && !empty($changes)) {
+        if ($type === 'updated' && !empty($newValues)) {
             $details = [];
-            foreach ($changes as $key => $value) {
+            foreach ($newValues as $key => $value) {
+                // If id or timestamps somehow got here, ignore them
                 if (in_array($key, ['updated_at', 'created_at', 'id'])) continue;
 
-                $oldValue = $this->getOriginal($key);
                 $label = ucwords(str_replace('_', ' ', $key));
+                $oldValue = $oldValues[$key] ?? 'N/A';
 
-                $oldLabel = $this->resolveValueLabel($key, $oldValue);
-                $newLabel = $this->resolveValueLabel($key, $value);
-
-                $details[] = "{$label} changed from '{$oldLabel}' to '{$newLabel}'";
+                $details[] = "{$label} changed from '{$oldValue}' to '{$value}'";
             }
             if (!empty($details)) {
                 return "{$modelName} updated: " . implode(', ', $details);
