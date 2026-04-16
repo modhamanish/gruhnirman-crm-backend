@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\LogsActivity;
+use App\Traits\NotifiesAction;
 
 class Lead extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, NotifiesAction;
 
     protected $fillable = [
         'name',

@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\PropertyItem;
+use App\Traits\NotifiesAction;
 
 class Property extends Model
 {
+    use NotifiesAction;
     protected $fillable = [
         'builder_id',
         'category_id',

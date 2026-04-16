@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\NotifiesAction;
 
 class Builder extends Model
 {
+    use NotifiesAction;
     protected $fillable = [
         'company_name',
         'name',

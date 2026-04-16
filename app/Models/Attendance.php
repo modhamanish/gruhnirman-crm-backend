@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\NotifiesAction;
 
 class Attendance extends Model
 {
+    use NotifiesAction;
     protected $fillable = [
         'user_id',
         'date',

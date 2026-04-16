@@ -26,7 +26,7 @@ class LeadActivityController extends Controller
     )]
     public function index(Request $request)
     {
-        $query = LeadActivity::with(['user', 'lead']);
+        $query = LeadActivity::with(['user']);
 
         if ($request->has('type')) {
             $type = $request->input('type');

@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\PropertyItem;
 use App\Traits\LogsActivity;
+use App\Traits\NotifiesAction;
 
 class SiteVisit extends Model
 {
-    use SoftDeletes, LogsActivity;
+    use SoftDeletes, LogsActivity, NotifiesAction;
     protected $fillable = [
         'lead_id',
         'property_id',

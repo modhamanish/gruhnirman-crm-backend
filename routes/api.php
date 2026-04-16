@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\InquiryController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\LeadActivityController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\AppNotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -127,4 +128,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Dashboard Stats
     Route::get('dashboard/lead-stats', [DashboardController::class, 'leadStats']);
     Route::get('dashboard/conversion-stats', [DashboardController::class, 'conversionStats']);
+
+    // Notifications
+    Route::get('notifications', [AppNotificationController::class, 'index']);
+    Route::get('notifications/unread-count', [AppNotificationController::class, 'unreadCount']);
+    Route::post('notifications/mark-all-as-read', [AppNotificationController::class, 'markAllAsRead']);
+    Route::post('notifications/{id}/mark-as-read', [AppNotificationController::class, 'markAsRead']);
+    Route::delete('notifications/{id}', [AppNotificationController::class, 'destroy']);
 });
