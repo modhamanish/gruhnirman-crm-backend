@@ -20,6 +20,11 @@ trait LogsActivity
 
     public function logActivity($type)
     {
+        // Skip logging if the Lead itself is deleted, as its activities are cascade deleted and foreign key will fail.
+        if ($this instanceof \App\Models\Lead && $type === 'deleted') {
+            return;
+        }
+
         $oldValues = null;
         $newValues = null;
 
