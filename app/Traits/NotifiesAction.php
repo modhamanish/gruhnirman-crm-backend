@@ -33,7 +33,9 @@ trait NotifiesAction
         $message = "{$causerName} has {$action} a {$modelName}.";
 
         // 1. Get all Admins and Super Admins
-        $admins = User::role(['Admin', 'Super Admin'])->get();
+        $admins = User::whereHas('roles', function ($query) {
+            $query->whereIn('name', ['Admin', 'Super Admin']);
+        })->get();
 
         // 2. Get Assigned User(s)
         $assignedUsers = $this->getUsersToNotify();
