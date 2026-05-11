@@ -111,4 +111,152 @@ class DashboardController extends Controller
             ], 500);
         }
     }
+
+    #[OA\Get(
+        path: "/api/dashboard/activity-highlights",
+        summary: "Get activity highlights for dashboard",
+        tags: ["Dashboard"],
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Success")
+        ]
+    )]
+    public function activityHighlights()
+    {
+        try {
+            $today = \Carbon\Carbon::today();
+            $weekStart = \Carbon\Carbon::now()->startOfWeek();
+            $weekEnd = \Carbon\Carbon::now()->endOfWeek();
+
+            $upcomingFollowups = \App\Models\FollowUp::where('status', 'schedule')
+                ->whereDate('next_follow_up_date_time', $today)
+                ->count();
+
+            $missedFollowups = \App\Models\FollowUp::where('status', 'schedule')
+                ->where('next_follow_up_date_time', '<', \Carbon\Carbon::now())
+                ->count();
+
+            $siteVisitsThisWeek = \App\Models\SiteVisit::whereDate('visit_date', '>=', $weekStart)
+                ->whereDate('visit_date', '<=', $weekEnd)
+                ->count();
+
+            $missedVisits = \App\Models\SiteVisit::where('visited', 0)
+                ->where('visit_date', '<', $today)
+                ->count();
+
+            return response()->json([
+                'status' => 'success',
+                'results' => [
+                    'upcoming_followups' => $upcomingFollowups,
+                    'missed_followups' => $missedFollowups,
+                    'site_visits_this_week' => $siteVisitsThisWeek,
+                    'missed_visits' => $missedVisits,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to fetch activity highlights',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    #[OA\Get(
+        path: "/api/dashboard/activity-schedule",
+        summary: "Get upcoming and recent activities for dashboard schedule",
+        tags: ["Dashboard"],
+        security: [["bearerAuth" => []]],
+        responses: [
+            new OA\Response(response: 200, description: "Success")
+        ]
+    )]
+    public function activitySchedule()
+    {
+        try {
+            $schedule = [];
+
+            // 1. Upcoming Site Visits
+            $upcomingSiteVisits = \App\Models\SiteVisit::with(['lead', 'property'])
+                ->where('visited', 0)
+                ->where('visit_date', '>=', \Carbon\Carbon::today())
+                ->orderBy('visit_date', 'asc')
+                ->limit(5)
+                ->get();
+
+            foreach ($upcomingSiteVisits as $visit) {
+                $schedule[] = [
+                    'type' => 'upcoming_site_visit',
+                    'title' => "Upcoming Site Visit: " . ($visit->lead->name ?? 'Unknown') . " @ " . ($visit->property->name ?? 'Project'),
+                    'description' => $visit->notes ?? "Scheduled site tour.",
+                    'time_display' => \Carbon\Carbon::parse($visit->visit_date)->diffForHumans(),
+                    'timestamp' => $visit->visit_date,
+                    'color' => 'red'
+                ];
+            }
+
+            // 2. Upcoming Follow-ups
+            $upcomingFollowUps = \App\Models\FollowUp::with(['lead'])
+                ->where('status', 'schedule')
+                ->where('next_follow_up_date_time', '>=', \Carbon\Carbon::now())
+                ->orderBy('next_follow_up_date_time', 'asc')
+                ->limit(5)
+                ->get();
+
+            foreach ($upcomingFollowUps as $followUp) {
+                $schedule[] = [
+                    'type' => 'upcoming_follow_up',
+                    'title' => "Upcoming Follow-up: " . ($followUp->lead->name ?? 'Unknown'),
+                    'description' => $followUp->notes ?? "Regular follow-up call.",
+                    'time_display' => \Carbon\Carbon::parse($followUp->next_follow_up_date_time)->diffForHumans(),
+                    'timestamp' => $followUp->next_follow_up_date_time,
+                    'color' => 'orange'
+                ];
+            }
+
+            // 3. Recent Lead Activity
+            $recentActivities = \App\Models\LeadActivity::with(['lead', 'user'])
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get();
+
+            foreach ($recentActivities as $activity) {
+                $type = 'recent_activity';
+                $color = 'blue';
+
+                if (str_contains(strtolower($activity->description), 'booking confirmed')) {
+                    $type = 'booking_confirmed';
+                    $color = 'green';
+                }
+
+                $schedule[] = [
+                    'type' => $type,
+                    'title' => $activity->description,
+                    'description' => "By " . ($activity->user->name ?? 'System'),
+                    'time_display' => \Carbon\Carbon::parse($activity->created_at)->diffForHumans(),
+                    'timestamp' => $activity->created_at->toDateTimeString(),
+                    'color' => $color
+                ];
+            }
+
+            // Sort everything by timestamp, but we want a logical order: Upcoming first (asc), then Recent (desc)
+            // Actually, usually a feed sorts everything descending. 
+            // But if we want "Upcoming" on top, we might need a custom sort.
+
+            usort($schedule, function ($a, $b) {
+                return strcmp($b['timestamp'], $a['timestamp']);
+            });
+
+            return response()->json([
+                'status' => 'success',
+                'results' => $schedule
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to fetch activity schedule',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

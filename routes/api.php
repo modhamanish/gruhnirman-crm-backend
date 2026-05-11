@@ -128,6 +128,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // Dashboard Stats
     Route::get('dashboard/lead-stats', [DashboardController::class, 'leadStats']);
     Route::get('dashboard/conversion-stats', [DashboardController::class, 'conversionStats']);
+    Route::get('dashboard/activity-highlights', [DashboardController::class, 'activityHighlights']);
+    Route::get('dashboard/activity-schedule', [DashboardController::class, 'activitySchedule']);
 
     // Notifications
     Route::get('notifications', [AppNotificationController::class, 'index']);
