@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Property;
 use App\Models\PropertyItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
@@ -193,6 +194,7 @@ class PropertyController extends Controller
             $data['brochure'] = $brochureName;
         }
 
+        $data['created_by'] = Auth::user()->id;
         $property = Property::create($data);
 
         if ($request->has('items') && is_array($request->items)) {

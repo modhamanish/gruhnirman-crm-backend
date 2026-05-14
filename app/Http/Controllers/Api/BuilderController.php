@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
@@ -128,6 +129,7 @@ class BuilderController extends Controller
             $data['company_logo'] =  $imageName;
         }
 
+        $data['created_by'] = Auth::user()->id;
         $builder = Builder::create($data);
 
         return response()->json([

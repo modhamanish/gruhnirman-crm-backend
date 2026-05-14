@@ -26,6 +26,7 @@ class Property extends Model
         'brochure_url',
         'additional_note',
         'status',
+        'created_by'
     ];
 
     protected $appends = ['image_display_url', 'brochure_display_url'];

@@ -22,6 +22,7 @@ class FollowUp extends Model
         'recording_link',
         'notes',
         'next_follow_up_date_time',
+        'created_by'
     ];
 
     public function lead()

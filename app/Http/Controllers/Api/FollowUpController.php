@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\FollowUp;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use OpenApi\Attributes as OA;
 
@@ -107,6 +108,7 @@ class FollowUpController extends Controller
             // First record (Current Interaction) - status is 'complete'
             $currentData = $data;
             $currentData['status'] = 'complete';
+            $currentData['created_by'] = Auth::user()->id;
             $followUp = FollowUp::create($currentData);
 
             // Second record (Next Follow Up) - status is 'schedule'
@@ -117,6 +119,7 @@ class FollowUpController extends Controller
                     'type' => 'Next Only',
                     'status' => 'schedule',
                     'next_follow_up_date_time' => $request->next_follow_up_date_time,
+                    'created_by' => Auth::user()->id,
                 ]);
             }
         } elseif ($data['type'] === 'Next Only') {
@@ -128,12 +131,14 @@ class FollowUpController extends Controller
             $data['duration'] = null;
             $data['recording_link'] = null;
             $data['notes'] = null;
+            $data['created_by'] = Auth::user()->id;
             $followUp = FollowUp::create($data);
         } else { // Current Only
             // Status is 'complete' for Current Only
             $data['status'] = 'complete';
             // Nullify next follow up for Current Only
             $data['next_follow_up_date_time'] = null;
+            $data['created_by'] = Auth::user()->id;
             $followUp = FollowUp::create($data);
         }
 

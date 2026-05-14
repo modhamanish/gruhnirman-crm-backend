@@ -21,6 +21,7 @@ class Builder extends Model
         'office_address',
         'total_project_completed',
         'ongoing_projects',
+        'created_by'
     ];
 
     protected $appends = ['company_logo_url'];

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\FollowUp;
 use App\Models\Lead;
 use App\Models\LeadStatus;
+use App\Models\SiteVisit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use OpenApi\Attributes as OA;
 
 class DashboardController extends Controller
@@ -81,11 +84,11 @@ class DashboardController extends Controller
             $results = $statuses->map(function ($status) use ($year) {
                 $monthlyData = [];
                 for ($month = 1; $month <= 12; $month++) {
-                    $count = Lead::where('type', 'lead')
-                        ->where('lead_status_id', $status->id)
-                        ->whereYear('created_at', $year)
-                        ->whereMonth('created_at', $month)
-                        ->count();
+                    $countQuery = Lead::where('type', 'lead')->where('lead_status_id', $status->id);
+                    if (!Auth::user()->hasRole('Super Admin')) {
+                        $countQuery->where('created_by', Auth::user()->id)->orWhere('assigned_to', Auth::user()->id);
+                    }
+                    $count = $countQuery->whereYear('created_at', $year)->whereMonth('created_at', $month)->count();
                     $monthlyData[] = $count;
                 }
 
@@ -128,19 +131,19 @@ class DashboardController extends Controller
             $weekStart = \Carbon\Carbon::now()->startOfWeek();
             $weekEnd = \Carbon\Carbon::now()->endOfWeek();
 
-            $upcomingFollowups = \App\Models\FollowUp::where('status', 'schedule')
+            $upcomingFollowups = FollowUp::where('status', 'schedule')
                 ->whereDate('next_follow_up_date_time', $today)
                 ->count();
 
-            $missedFollowups = \App\Models\FollowUp::where('status', 'schedule')
+            $missedFollowups = FollowUp::where('status', 'schedule')
                 ->where('next_follow_up_date_time', '<', \Carbon\Carbon::now())
                 ->count();
 
-            $siteVisitsThisWeek = \App\Models\SiteVisit::whereDate('visit_date', '>=', $weekStart)
+            $siteVisitsThisWeek = SiteVisit::whereDate('visit_date', '>=', $weekStart)
                 ->whereDate('visit_date', '<=', $weekEnd)
                 ->count();
 
-            $missedVisits = \App\Models\SiteVisit::where('visited', 0)
+            $missedVisits = SiteVisit::where('visited', 0)
                 ->where('visit_date', '<', $today)
                 ->count();
 

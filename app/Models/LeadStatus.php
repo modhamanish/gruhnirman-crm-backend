@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class LeadStatus extends Model
 {
@@ -25,6 +26,10 @@ class LeadStatus extends Model
 
     public function getLeadCountAttribute()
     {
-        return Lead::where('lead_status_id', $this->id)->count();
+        if (Auth::user()->hasRole('Super Admin')) {
+            return Lead::where('lead_status_id', $this->id)->count();
+        } else {
+            return Lead::where('lead_status_id', $this->id)->where('created_by', Auth::user()->id)->orWhere('assigned_to', Auth::user()->id)->count();
+        }
     }
 }
