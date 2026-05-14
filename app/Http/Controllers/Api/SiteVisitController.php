@@ -63,6 +63,10 @@ class SiteVisitController extends Controller
             $query->where('interest_status', $request->input('interest_status'));
         }
 
+        if (!Auth::user()->hasRole('Super Admin')) {
+            $query->where('added_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
+        }
+
         $perPage = $request->input('per_page', 10);
         $siteVisits = $query->orderBy('id', 'desc')->paginate($perPage);
 

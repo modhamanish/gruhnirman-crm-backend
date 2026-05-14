@@ -132,20 +132,32 @@ class DashboardController extends Controller
             $weekEnd = \Carbon\Carbon::now()->endOfWeek();
 
             $upcomingFollowups = FollowUp::where('status', 'schedule')
-                ->whereDate('next_follow_up_date_time', $today)
-                ->count();
+                ->whereDate('next_follow_up_date_time', $today);
+            if (!Auth::user()->hasRole('Super Admin')) {
+                $upcomingFollowups->where('created_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
+            }
+            $upcomingFollowups = $upcomingFollowups->count();
 
             $missedFollowups = FollowUp::where('status', 'schedule')
-                ->where('next_follow_up_date_time', '<', \Carbon\Carbon::now())
-                ->count();
+                ->where('next_follow_up_date_time', '<', \Carbon\Carbon::now());
+            if (!Auth::user()->hasRole('Super Admin')) {
+                $missedFollowups->where('created_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
+            }
+            $missedFollowups = $missedFollowups->count();
 
             $siteVisitsThisWeek = SiteVisit::whereDate('visit_date', '>=', $weekStart)
-                ->whereDate('visit_date', '<=', $weekEnd)
-                ->count();
+                ->whereDate('visit_date', '<=', $weekEnd);
+            if (!Auth::user()->hasRole('Super Admin')) {
+                $siteVisitsThisWeek->where('added_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
+            }
+            $siteVisitsThisWeek = $siteVisitsThisWeek->count();
 
             $missedVisits = SiteVisit::where('visited', 0)
-                ->where('visit_date', '<', $today)
-                ->count();
+                ->where('visit_date', '<', $today);
+            if (!Auth::user()->hasRole('Super Admin')) {
+                $missedVisits->where('added_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
+            }
+            $missedVisits = $missedVisits->count();
 
             return response()->json([
                 'status' => 'success',
@@ -182,8 +194,11 @@ class DashboardController extends Controller
             // 1. Upcoming Site Visits
             $upcomingSiteVisits = \App\Models\SiteVisit::with(['lead', 'property'])
                 ->where('visited', 0)
-                ->where('visit_date', '>=', \Carbon\Carbon::today())
-                ->orderBy('visit_date', 'asc')
+                ->where('visit_date', '>=', \Carbon\Carbon::today());
+            if (!Auth::user()->hasRole('Super Admin')) {
+                $upcomingSiteVisits->where('added_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
+            }
+            $upcomingSiteVisits = $upcomingSiteVisits->orderBy('visit_date', 'asc')
                 ->limit(5)
                 ->get();
 
@@ -201,8 +216,11 @@ class DashboardController extends Controller
             // 2. Upcoming Follow-ups
             $upcomingFollowUps = \App\Models\FollowUp::with(['lead'])
                 ->where('status', 'schedule')
-                ->where('next_follow_up_date_time', '>=', \Carbon\Carbon::now())
-                ->orderBy('next_follow_up_date_time', 'asc')
+                ->where('next_follow_up_date_time', '>=', \Carbon\Carbon::now());
+            if (!Auth::user()->hasRole('Super Admin')) {
+                $upcomingFollowUps->where('added_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
+            }
+            $upcomingFollowUps = $upcomingFollowUps->orderBy('next_follow_up_date_time', 'asc')
                 ->limit(5)
                 ->get();
 

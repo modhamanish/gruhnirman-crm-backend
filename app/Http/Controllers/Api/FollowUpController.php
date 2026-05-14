@@ -43,6 +43,10 @@ class FollowUpController extends Controller
             $query->where('type', $request->type);
         }
 
+        if (!Auth::user()->hasRole('Super Admin')) {
+            $query->where('created_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
+        }
+
         $perPage = $request->input('per_page', 10);
         $followUps = $query->orderBy('id', 'desc')->paginate($perPage);
 
