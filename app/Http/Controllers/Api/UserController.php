@@ -56,8 +56,11 @@ class UserController extends Controller
         $query->whereHas('roles', function ($q) {
             $q->where('name', '!=', 'Super Admin');
         });
-        $perPage = $request->input('per_page', 10);
-        $users = $query->orderBy('id', 'desc')->paginate($perPage);
+        if ($request->has('page') && !empty($request->page) && $request->has('per_page') && !empty($request->per_page)) {
+            $users = $query->orderBy('id', 'desc')->paginate($request->per_page);
+        } else {
+            $users = $query->orderBy('id', 'desc')->get();
+        }
 
         return response()->json([
             'status' => 'success',
