@@ -53,7 +53,9 @@ class UserController extends Controller
                 $q->where('name', $role);
             });
         }
-
+        $query->whereHas('roles', function ($q) {
+            $q->where('name', '!=', 'Super Admin');
+        });
         $perPage = $request->input('per_page', 10);
         $users = $query->orderBy('id', 'desc')->paginate($perPage);
 
