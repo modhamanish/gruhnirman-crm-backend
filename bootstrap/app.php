@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
         $schedule->command('app:mark-loss-follow-ups')->everyMinute();
+        $schedule->command('send:reminders')->everyMinute();
     })
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(HandleCors::class);
