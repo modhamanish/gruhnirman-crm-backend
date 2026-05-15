@@ -19,13 +19,44 @@ class UserController extends Controller
         summary: "Get all users",
         tags: ["Users"],
         security: [["bearerAuth" => []]],
+        parameters: [
+            new OA\Parameter(name: "search", in: "query", required: false, schema: new OA\Schema(type: "string")),
+            new OA\Parameter(name: "role", in: "query", required: false, schema: new OA\Schema(type: "string")),
+            new OA\Parameter(name: "status", in: "query", required: false, schema: new OA\Schema(type: "string", enum: ["active", "inactive"])),
+            new OA\Parameter(name: "per_page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 10)),
+            new OA\Parameter(name: "page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 1)),
+        ],
         responses: [
             new OA\Response(response: 200, description: "Success")
         ]
     )]
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('roles')->get();
+        $query = User::with('roles');
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('contact_number', 'LIKE', "%{$search}%")
+                    ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        if ($request->has('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        if ($request->has('role')) {
+            $role = $request->input('role');
+            $query->whereHas('roles', function ($q) use ($role) {
+                $q->where('name', $role);
+            });
+        }
+
+        $perPage = $request->input('per_page', 10);
+        $users = $query->orderBy('id', 'desc')->paginate($perPage);
+
         return response()->json([
             'status' => 'success',
             'results' => $users
