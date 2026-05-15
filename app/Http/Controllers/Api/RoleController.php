@@ -199,10 +199,10 @@ class RoleController extends Controller
                 'message' => 'Role not found'
             ], 404);
         }
-        if ($role->name === 'Super Admin') {
+        if ($role->name === 'Super Admin' || $role->name === 'Admin') {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Super Admin role cannot be deleted'
+                'message' => 'This role cannot be deleted.'
             ], 403);
         }
 

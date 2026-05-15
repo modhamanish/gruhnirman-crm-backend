@@ -43,7 +43,7 @@ class FollowUpController extends Controller
             $query->where('type', $request->type);
         }
 
-        if (!Auth::user()->hasRole('Super Admin')) {
+        if (!Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole('Admin')) {
             $query->where('created_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
         }
 

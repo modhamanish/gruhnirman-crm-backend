@@ -60,7 +60,7 @@ class InquiryController extends Controller
                 $query->where('assigned_to', $request->input('assigned_to'));
             }
 
-            if (!Auth::user()->hasRole('Super Admin')) {
+            if (!Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole('Admin')) {
                 $query->where('created_by', Auth::user()->id)->orWhere('assigned_to', Auth::user()->id);
             }
 

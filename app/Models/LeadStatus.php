@@ -26,7 +26,7 @@ class LeadStatus extends Model
 
     public function getLeadCountAttribute()
     {
-        if (Auth::user()->hasRole('Super Admin')) {
+        if (Auth::user()->hasRole('Super Admin') || Auth::user()->hasRole('Admin')) {
             return Lead::where('lead_status_id', $this->id)->count();
         } else {
             return Lead::where('lead_status_id', $this->id)->where('created_by', Auth::user()->id)->orWhere('assigned_to', Auth::user()->id)->count();
