@@ -34,7 +34,7 @@ class UserController extends Controller
     {
         $query = User::with('roles');
 
-        if ($request->has('search')) {
+        if ($request->has('search') && !empty($request->search)) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
@@ -43,11 +43,11 @@ class UserController extends Controller
             });
         }
 
-        if ($request->has('status')) {
+        if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->input('status'));
         }
 
-        if ($request->has('role')) {
+        if ($request->has('role') && !empty($request->role)) {
             $role = $request->input('role');
             $query->whereHas('roles', function ($q) use ($role) {
                 $q->where('name', $role);
