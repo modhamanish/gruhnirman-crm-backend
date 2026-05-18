@@ -329,9 +329,9 @@ class LeadController extends Controller
 
         $query = Property::with(['builder', 'category', 'propertyType']);
 
-        // Distance select (if lat/lon available) - Using CAST for PostgreSQL compatibility
+        // Distance select (if lat/lon available)
         if ($lat && $lon) {
-            $query->selectRaw("*, ( 6371 * acos( LEAST(1.0, GREATEST(-1.0, cos( radians(CAST(? AS double precision)) ) * cos( radians( CAST(latitude AS double precision) ) ) * cos( radians( CAST(longitude AS double precision) ) - radians(CAST(? AS double precision)) ) + sin( radians(CAST(? AS double precision)) ) * sin( radians( CAST(latitude AS double precision) ) ) )) ) ) AS distance", [$lat, $lon, $lat]);
+            $query->selectRaw("*, ( 6371 * acos( LEAST(1.0, GREATEST(-1.0, cos( radians(?) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitude ) ) )) ) ) AS distance", [$lat, $lon, $lat]);
         } else {
             $query->select('*');
         }
@@ -348,8 +348,7 @@ class LeadController extends Controller
         // if ($lead->inquiry_for) {
         //     $search = $lead->inquiry_for;
         //     $query->where(function ($q) use ($search) {
-        //         // Using ILIKE for case-insensitive search in PostgreSQL
-        //         $q->where('name', 'ILIKE', "%{$search}%");
+        //         $q->where('name', 'LIKE', "%{$search}%");
         //     });
         // }
 
@@ -357,8 +356,8 @@ class LeadController extends Controller
 
         // 1. Interested Area Matching (Properties in preferred area come first)
         if ($interestedArea) {
-            // Using ILIKE for case-insensitive match in PostgreSQL
-            $query->orderByRaw("CASE WHEN address ILIKE ? THEN 0 ELSE 1 END", ["%{$interestedArea}%"]);
+            // Using LIKE for case-insensitive match in MySQL
+            $query->orderByRaw("CASE WHEN address LIKE ? THEN 0 ELSE 1 END", ["%{$interestedArea}%"]);
         }
 
         // 2. Latitude/Longitude (Distance based sorting)
