@@ -63,7 +63,7 @@ class LeadController extends Controller
             $query->where('assigned_to', $request->input('assigned_to'));
         }
 
-        if (!Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole('Admin')) {
+        if (!Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole('Admin') && !Auth::user()->hasPermissionTo('lead-access-all')) {
             $query->where('created_by', Auth::user()->id)->orWhere('assigned_to', Auth::user()->id);
         }
 

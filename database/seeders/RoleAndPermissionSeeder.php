@@ -19,22 +19,6 @@ class RoleAndPermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Clear existing permissions and roles
-        $tables = [
-            'role_has_permissions',
-            'model_has_roles',
-            'model_has_permissions',
-            'roles',
-            'permissions',
-        ];
-
-        // DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        foreach ($tables as $table) {
-            DB::statement("TRUNCATE TABLE $table CASCADE");
-            // DB::table($table)->truncate();
-        }
-        // DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
         // Create permissions
         $permissions = [
             'role-list',
@@ -90,6 +74,7 @@ class RoleAndPermissionSeeder extends Seeder
             'attendance-create',
             'attendance-edit',
             'attendance-delete',
+            'lead-access-all'
         ];
 
         foreach ($permissions as $permission) {
@@ -100,7 +85,7 @@ class RoleAndPermissionSeeder extends Seeder
         $role = Role::findOrCreate('Super Admin', 'sanctum');
 
         // Give all permissions to Super Admin
-        $role->givePermissionTo(Permission::all());
+        $role->syncPermissions(Permission::all());
 
         // Create Super Admin User
         $user = User::updateOrCreate(

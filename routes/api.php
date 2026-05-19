@@ -29,78 +29,85 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // Roles & Permissions
-    Route::apiResource('roles', RoleController::class);
+    Route::get('roles', [RoleController::class, 'index'])->middleware('permission:role-list|user-list|attendance-list');
+    Route::post('roles', [RoleController::class, 'store'])->middleware('permission:role-create');
+    Route::get('roles/{role}', [RoleController::class, 'show'])->middleware('permission:role-list|user-list|attendance-list');
+    Route::post('roles/{role}', [RoleController::class, 'update'])->middleware('permission:role-edit');
+    Route::delete('roles/{role}', [RoleController::class, 'destroy'])->middleware('permission:role-delete');
+
     Route::get('permissions', [RoleController::class, 'getPermissions']);
 
     // Builders CRUD with Permissions
-    Route::get('builders', [BuilderController::class, 'index'])->middleware('permission:builder-list');
+    Route::get('builders', [BuilderController::class, 'index'])->middleware('permission:builder-list|property-list|site-visit-list');
     Route::post('builders', [BuilderController::class, 'store'])->middleware('permission:builder-create');
     Route::get('builders/{builder}', [BuilderController::class, 'show'])->middleware('permission:builder-list');
     Route::post('builders/{builder}', [BuilderController::class, 'update'])->middleware('permission:builder-edit');
     Route::delete('builders/{builder}', [BuilderController::class, 'destroy'])->middleware('permission:builder-delete');
 
     // User Management
-    Route::get('users', [UserController::class, 'index'])->middleware('permission:user-list');
+    Route::get('users', [UserController::class, 'index'])->middleware('permission:user-list|lead-list|follow-up-list|lead-access-all');
     Route::post('users', [UserController::class, 'store'])->middleware('permission:user-create');
-    Route::get('users/{user}', [UserController::class, 'show'])->middleware('permission:user-list');
+    Route::get('users/{user}', [UserController::class, 'show'])->middleware('permission:user-list|lead-list|follow-up-list|lead-access-all');
     Route::post('users/{user}', [UserController::class, 'update'])->middleware('permission:user-edit');
     Route::delete('users/{user}', [UserController::class, 'destroy'])->middleware('permission:user-delete');
 
     // Property Management
-    Route::get('properties', [PropertyController::class, 'index'])->middleware('permission:property-list');
+    Route::get('properties', [PropertyController::class, 'index'])->middleware('permission:property-list|site-visit-list|category-list');
     Route::post('properties', [PropertyController::class, 'store'])->middleware('permission:property-create');
-    Route::get('properties/{property}', [PropertyController::class, 'show'])->middleware('permission:property-list');
+    Route::get('properties/{property}', [PropertyController::class, 'show'])->middleware('permission:property-list|site-visit-list|category-list');
     Route::post('properties/{property}', [PropertyController::class, 'update'])->middleware('permission:property-edit');
     Route::delete('properties/{property}', [PropertyController::class, 'destroy'])->middleware('permission:property-delete');
 
     // Category Management
-    Route::get('categories', [CategoryController::class, 'index'])->middleware('permission:category-list');
+    Route::get('categories', [CategoryController::class, 'index'])->middleware('permission:category-list|property-list|lead-list|lead-access-all');
     Route::post('categories', [CategoryController::class, 'store'])->middleware('permission:category-create');
-    Route::get('categories/{category}', [CategoryController::class, 'show'])->middleware('permission:category-list');
+    Route::get('categories/{category}', [CategoryController::class, 'show'])->middleware('permission:category-list|property-list|lead-list|lead-access-all');
     Route::put('categories/{category}', [CategoryController::class, 'update'])->middleware('permission:category-edit');
     Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->middleware('permission:category-delete');
 
     // Property Type Management
-    Route::get('property-types', [PropertyTypeController::class, 'index'])->middleware('permission:property-type-list');
+    Route::get('property-types', [PropertyTypeController::class, 'index'])->middleware('permission:property-type-list|property-list|lead-list|lead-access-all');
     Route::post('property-types', [PropertyTypeController::class, 'store'])->middleware('permission:property-type-create');
-    Route::get('property-types/{id}', [PropertyTypeController::class, 'show'])->middleware('permission:property-type-list');
+    Route::get('property-types/{id}', [PropertyTypeController::class, 'show'])->middleware('permission:property-type-list|property-list|lead-list|lead-access-all');
     Route::put('property-types/{id}', [PropertyTypeController::class, 'update'])->middleware('permission:property-type-edit');
     Route::delete('property-types/{id}', [PropertyTypeController::class, 'destroy'])->middleware('permission:property-type-delete');
 
     // Lead Source Management
-    Route::get('lead-sources', [LeadSourceController::class, 'index'])->middleware('permission:lead-source-list');
+    Route::get('lead-sources', [LeadSourceController::class, 'index'])->middleware('permission:lead-source-list|lead-list|lead-access-all');
     Route::post('lead-sources', [LeadSourceController::class, 'store'])->middleware('permission:lead-source-create');
-    Route::get('lead-sources/{leadSource}', [LeadSourceController::class, 'show'])->middleware('permission:lead-source-list');
+    Route::get('lead-sources/{leadSource}', [LeadSourceController::class, 'show'])->middleware('permission:lead-source-list|lead-list|lead-access-all');
     Route::put('lead-sources/{leadSource}', [LeadSourceController::class, 'update'])->middleware('permission:lead-source-edit');
     Route::delete('lead-sources/{leadSource}', [LeadSourceController::class, 'destroy'])->middleware('permission:lead-source-delete');
 
     // Lead Status Management
-    Route::get('lead-statuses', [LeadStatusController::class, 'index'])->middleware('permission:lead-status-list');
+    Route::get('lead-statuses', [LeadStatusController::class, 'index'])->middleware('permission:lead-status-list|lead-list|lead-access-all');
     Route::post('lead-statuses', [LeadStatusController::class, 'store'])->middleware('permission:lead-status-create');
-    Route::get('lead-statuses/{leadStatus}', [LeadStatusController::class, 'show'])->middleware('permission:lead-status-list');
+    Route::get('lead-statuses/{leadStatus}', [LeadStatusController::class, 'show'])->middleware('permission:lead-status-list|lead-list|lead-access-all');
     Route::put('lead-statuses/{leadStatus}', [LeadStatusController::class, 'update'])->middleware('permission:lead-status-edit');
     Route::delete('lead-statuses/{leadStatus}', [LeadStatusController::class, 'destroy'])->middleware('permission:lead-status-delete');
 
     // Lead Management
-    Route::get('leads', [LeadController::class, 'index'])->middleware('permission:lead-list');
-    Route::post('leads', [LeadController::class, 'store'])->middleware('permission:lead-create');
-    Route::get('leads/{lead}', [LeadController::class, 'show'])->middleware('permission:lead-list');
-    Route::get('leads/{id}/suggested-properties', [LeadController::class, 'suggestedProperties'])->middleware('permission:lead-list');
-    Route::get('leads/{id}/activities', [LeadController::class, 'activities'])->middleware('permission:lead-list');
-    Route::put('leads/{lead}', [LeadController::class, 'update'])->middleware('permission:lead-edit');
-    Route::delete('leads/{lead}', [LeadController::class, 'destroy'])->middleware('permission:lead-delete');
+    Route::get('leads', [LeadController::class, 'index'])->middleware('permission:lead-list|follow-up-list|site-visit-list|lead-access-all');
+    Route::post('leads', [LeadController::class, 'store'])->middleware('permission:lead-create|lead-access-all');
+    Route::get('leads/{lead}', [LeadController::class, 'show'])->middleware('permission:lead-list|follow-up-list|site-visit-list|lead-access-all');
+    Route::get('leads/{id}/suggested-properties', [LeadController::class, 'suggestedProperties'])->middleware('permission:lead-list|follow-up-list|site-visit-list|lead-access-all');
+    Route::get('leads/{id}/activities', [LeadController::class, 'activities'])->middleware('permission:lead-list|follow-up-list|site-visit-list|lead-access-all');
+    Route::put('leads/{lead}', [LeadController::class, 'update'])->middleware('permission:lead-edit|lead-access-all');
+    Route::delete('leads/{lead}', [LeadController::class, 'destroy'])->middleware('permission:lead-delete|lead-access-all');
 
     // Site Visit Management
-    Route::get('site-visits', [SiteVisitController::class, 'index'])->middleware('permission:site-visit-list');
+    // Route::get('site-visits', [SiteVisitController::class, 'index'])->middleware('permission:site-visit-list|lead-list');
+    Route::get('site-visits', [SiteVisitController::class, 'index']);
     Route::post('site-visits', [SiteVisitController::class, 'store'])->middleware('permission:site-visit-create');
-    Route::get('site-visits/{id}', [SiteVisitController::class, 'show'])->middleware('permission:site-visit-list');
+    Route::get('site-visits/{id}', [SiteVisitController::class, 'show'])->middleware('permission:site-visit-list|lead-list|lead-access-all');
     Route::put('site-visits/{id}', [SiteVisitController::class, 'update'])->middleware('permission:site-visit-edit');
     Route::delete('site-visits/{id}', [SiteVisitController::class, 'destroy'])->middleware('permission:site-visit-delete');
 
     // Follow Up Management
-    Route::get('follow-ups', [FollowUpController::class, 'index'])->middleware('permission:follow-up-list');
+    // Route::get('follow-ups', [FollowUpController::class, 'index'])->middleware('permission:follow-up-list|lead-list');
+    Route::get('follow-ups', [FollowUpController::class, 'index']);
     Route::post('follow-ups', [FollowUpController::class, 'store'])->middleware('permission:follow-up-create');
-    Route::get('follow-ups/{id}', [FollowUpController::class, 'show'])->middleware('permission:follow-up-list');
+    Route::get('follow-ups/{id}', [FollowUpController::class, 'show'])->middleware('permission:follow-up-list|lead-list|lead-access-all');
     Route::put('follow-ups/{id}', [FollowUpController::class, 'update'])->middleware('permission:follow-up-edit');
     Route::delete('follow-ups/{id}', [FollowUpController::class, 'destroy'])->middleware('permission:follow-up-delete');
 
@@ -123,7 +130,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('attendances/check-out', [AttendanceController::class, 'checkOut']);
 
     // Global Activity Logs
-    Route::get('activities', [LeadActivityController::class, 'index'])->middleware('permission:lead-list');
+    Route::get('activities', [LeadActivityController::class, 'index']);
 
     // Dashboard Stats
     Route::get('dashboard/lead-stats', [DashboardController::class, 'leadStats']);
