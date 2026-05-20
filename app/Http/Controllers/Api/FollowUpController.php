@@ -20,6 +20,10 @@ class FollowUpController extends Controller
             new OA\Parameter(name: "lead_id", in: "query", required: false, schema: new OA\Schema(type: "integer")),
             new OA\Parameter(name: "user_id", in: "query", required: false, schema: new OA\Schema(type: "integer")),
             new OA\Parameter(name: "type", in: "query", required: false, schema: new OA\Schema(type: "string", enum: ["Current Only", "Both", "Next Only"])),
+            new OA\Parameter(name: "interaction_date_from", in: "query", required: false, schema: new OA\Schema(type: "string", format: "date")),
+            new OA\Parameter(name: "interaction_date_to", in: "query", required: false, schema: new OA\Schema(type: "string", format: "date")),
+            new OA\Parameter(name: "next_follow_up_date_from", in: "query", required: false, schema: new OA\Schema(type: "string", format: "date")),
+            new OA\Parameter(name: "next_follow_up_date_to", in: "query", required: false, schema: new OA\Schema(type: "string", format: "date")),
             new OA\Parameter(name: "per_page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 10)),
             new OA\Parameter(name: "page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 1)),
         ],
@@ -31,16 +35,32 @@ class FollowUpController extends Controller
     {
         $query = FollowUp::with(['lead', 'user']);
 
-        if ($request->has('lead_id')) {
+        if ($request->has('lead_id') && !empty($request->lead_id)) {
             $query->where('lead_id', $request->lead_id);
         }
 
-        if ($request->has('user_id')) {
+        if ($request->has('user_id') && !empty($request->user_id)) {
             $query->where('user_id', $request->user_id);
         }
 
-        if ($request->has('type')) {
+        if ($request->has('type') && !empty($request->type)) {
             $query->where('type', $request->type);
+        }
+
+        if ($request->has('interaction_date_from') && !empty($request->interaction_date_from)) {
+            $query->whereDate('interaction_date_time', '>=', Date('Y-m-d', strtotime($request->interaction_date_from)));
+        }
+
+        if ($request->has('interaction_date_to') && !empty($request->interaction_date_to)) {
+            $query->whereDate('interaction_date_time', '<=', Date('Y-m-d', strtotime($request->interaction_date_to)));
+        }
+
+        if ($request->has('next_follow_up_date_from') && !empty($request->next_follow_up_date_from)) {
+            $query->whereDate('next_follow_up_date_time', '>=', Date('Y-m-d', strtotime($request->next_follow_up_date_from)));
+        }
+
+        if ($request->has('next_follow_up_date_to') && !empty($request->next_follow_up_date_to)) {
+            $query->whereDate('next_follow_up_date_time', '<=', Date('Y-m-d', strtotime($request->next_follow_up_date_to)));
         }
 
         if (!Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole('Admin')) {
