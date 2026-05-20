@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('roles', [RoleController::class, 'index'])->middleware('permission:role-list|user-list|attendance-list');
     Route::post('roles', [RoleController::class, 'store'])->middleware('permission:role-create');
     Route::get('roles/{role}', [RoleController::class, 'show'])->middleware('permission:role-list|user-list|attendance-list');
-    Route::post('roles/{role}', [RoleController::class, 'update'])->middleware('permission:role-edit');
+    Route::put('roles/{role}', [RoleController::class, 'update'])->middleware('permission:role-edit');
     Route::delete('roles/{role}', [RoleController::class, 'destroy'])->middleware('permission:role-delete');
 
     Route::get('permissions', [RoleController::class, 'getPermissions']);
