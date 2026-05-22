@@ -41,6 +41,11 @@ class Property extends Model
         return $this->belongsTo(Builder::class);
     }
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by')->select('id', 'name');
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class);

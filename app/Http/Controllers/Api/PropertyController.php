@@ -35,7 +35,7 @@ class PropertyController extends Controller
     )]
     public function index(Request $request)
     {
-        $query = Property::with(['builder', 'category', 'propertyType', 'items']);
+        $query = Property::with(['builder', 'category', 'propertyType', 'items', 'createdBy']);
 
         if ($request->has('search')) {
             $search = $request->input('search');

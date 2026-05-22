@@ -33,7 +33,7 @@ class FollowUpController extends Controller
     )]
     public function index(Request $request)
     {
-        $query = FollowUp::with(['lead', 'user']);
+        $query = FollowUp::with(['lead', 'assignedTo', 'createdBy']);
 
         if ($request->has('lead_id') && !empty($request->lead_id)) {
             $query->where('lead_id', $request->lead_id);
@@ -63,9 +63,9 @@ class FollowUpController extends Controller
             $query->whereDate('next_follow_up_date_time', '<=', Date('Y-m-d', strtotime($request->next_follow_up_date_to)));
         }
 
-        if (!Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole('Admin')) {
-            $query->where('created_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
-        }
+        // if (!Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole('Admin')) {
+        //     $query->where('created_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
+        // }
 
         $perPage = $request->input('per_page', 10);
         $followUps = $query->orderBy('id', 'desc')->paginate($perPage);
@@ -188,7 +188,7 @@ class FollowUpController extends Controller
     )]
     public function show($id)
     {
-        $followUp = FollowUp::with(['lead', 'user'])->find($id);
+        $followUp = FollowUp::with(['lead', 'assignedTo', 'createdBy'])->find($id);
         if (!$followUp) {
             return response()->json([
                 'status' => 'error',

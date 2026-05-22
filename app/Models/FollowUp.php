@@ -30,8 +30,13 @@ class FollowUp extends Model
         return $this->belongsTo(Lead::class);
     }
 
-    public function user()
+    public function assignedTo()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id')->select('id', 'name');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by')->select('id', 'name');
     }
 }

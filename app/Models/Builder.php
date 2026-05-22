@@ -37,4 +37,9 @@ class Builder extends Model
         }
         return '';
     }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by')->select('id', 'name');
+    }
 }

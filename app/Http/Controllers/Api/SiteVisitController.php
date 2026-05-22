@@ -32,7 +32,7 @@ class SiteVisitController extends Controller
     )]
     public function index(Request $request)
     {
-        $query = SiteVisit::with(['lead', 'property', 'executive']);
+        $query = SiteVisit::with(['lead', 'property', 'assignedTo', 'createdBy']);
 
         if ($request->has('search')) {
             $search = $request->input('search');
@@ -63,9 +63,9 @@ class SiteVisitController extends Controller
             $query->where('interest_status', $request->input('interest_status'));
         }
 
-        if (!Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole('Admin')) {
-            $query->where('added_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
-        }
+        // if (!Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole('Admin')) {
+        //     $query->where('added_by', Auth::user()->id)->orWhere('user_id', Auth::user()->id);
+        // }
 
         $perPage = $request->input('per_page', 10);
         $siteVisits = $query->orderBy('id', 'desc')->paginate($perPage);
@@ -146,7 +146,7 @@ class SiteVisitController extends Controller
     )]
     public function show($id)
     {
-        $siteVisit = SiteVisit::with(['lead', 'property', 'executive'])->find($id);
+        $siteVisit = SiteVisit::with(['lead', 'property', 'assignedTo', 'createdBy'])->find($id);
         if ($siteVisit) {
             return response()->json([
                 'status' => 'success',

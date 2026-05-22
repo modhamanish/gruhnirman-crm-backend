@@ -48,13 +48,13 @@ class SiteVisit extends Model
         return $this->belongsTo(Property::class);
     }
 
-    public function executive()
+    public function assignedTo()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id')->select('id', 'name');
     }
 
-    public function addedBy()
+    public function createdBy()
     {
-        return $this->belongsTo(User::class, 'added_by');
+        return $this->belongsTo(User::class, 'added_by')->select('id', 'name');
     }
 }

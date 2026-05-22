@@ -52,12 +52,12 @@ class Lead extends Model
 
     public function assignedTo()
     {
-        return $this->belongsTo(User::class, 'assigned_to');
+        return $this->belongsTo(User::class, 'assigned_to')->select('id', 'name');
     }
 
-    public function creator()
+    public function createdBy()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by')->select('id', 'name');
     }
 
     public function siteVisits()

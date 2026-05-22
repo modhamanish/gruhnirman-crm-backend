@@ -33,7 +33,7 @@ class LeadController extends Controller
     )]
     public function index(Request $request)
     {
-        $query = Lead::where('type', 'lead')->with(['category', 'propertyType', 'leadStatus', 'leadSource', 'assignedTo', 'creator']);
+        $query = Lead::where('type', 'lead')->with(['category', 'propertyType', 'leadStatus', 'leadSource', 'assignedTo', 'createdBy']);
 
         if ($request->has('search')) {
             $search = $request->input('search');
