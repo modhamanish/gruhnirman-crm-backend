@@ -150,7 +150,7 @@ class LeadController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Lead created successfully',
-            'results' => $lead->load(['category', 'propertyType', 'leadStatus', 'leadSource', 'assignedTo', 'creator'])
+            'results' => $lead->load(['category', 'propertyType', 'leadStatus', 'leadSource', 'assignedTo', 'createdBy'])
         ], 201);
     }
 
@@ -178,7 +178,7 @@ class LeadController extends Controller
             $lead->next_follow_up = $lead->followUps()->where('next_follow_up_date_time', '>=', date('Y-m-d H:i:s'))->orderBy('next_follow_up_date_time', 'asc')->first();
             return response()->json([
                 'status' => 'success',
-                'results' => $lead->load(['category', 'propertyType', 'leadStatus', 'leadSource', 'assignedTo', 'creator'])
+                'results' => $lead->load(['category', 'propertyType', 'leadStatus', 'leadSource', 'assignedTo', 'createdBy'])
             ]);
         } else {
             return response()->json([
@@ -265,7 +265,7 @@ class LeadController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Lead updated successfully',
-            'results' => $lead->load(['category', 'propertyType', 'leadStatus', 'leadSource', 'assignedTo', 'creator'])
+            'results' => $lead->load(['category', 'propertyType', 'leadStatus', 'leadSource', 'assignedTo', 'createdBy'])
         ]);
     }
 

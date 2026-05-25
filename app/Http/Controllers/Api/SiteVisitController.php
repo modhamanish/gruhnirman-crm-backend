@@ -127,7 +127,7 @@ class SiteVisitController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Site visit created successfully',
-            'results' => $siteVisit->load(['lead', 'property', 'executive'])
+            'results' => $siteVisit->load(['lead', 'property', 'assignedTo', 'createdBy'])
         ], 201);
     }
 
@@ -222,7 +222,7 @@ class SiteVisitController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Site visit updated successfully',
-            'results' => $siteVisit->load(['lead', 'property', 'executive'])
+            'results' => $siteVisit->load(['lead', 'property', 'assignedTo', 'createdBy'])
         ]);
     }
 

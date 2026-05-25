@@ -169,7 +169,7 @@ class FollowUpController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Follow up created successfully',
-            'results' => $followUp->load(['lead', 'user'])
+            'results' => $followUp->load(['lead', 'assignedTo', 'createdBy'])
         ], 201);
     }
 
@@ -280,7 +280,7 @@ class FollowUpController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Follow up updated successfully',
-            'results' => $followUp->load(['lead', 'user'])
+            'results' => $followUp->load(['lead', 'assignedTo', 'createdBy'])
         ]);
     }
 
