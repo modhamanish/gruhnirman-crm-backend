@@ -23,6 +23,9 @@ class SiteVisitController extends Controller
             new OA\Parameter(name: "user_id", in: "query", required: false, schema: new OA\Schema(type: "integer")),
             new OA\Parameter(name: "visited", in: "query", required: false, schema: new OA\Schema(type: "string", enum: ["Yes", "No"])),
             new OA\Parameter(name: "interest_status", in: "query", required: false, schema: new OA\Schema(type: "string", enum: ["Thinking", "Interested", "Highly Interested", "Not Interested"])),
+            new OA\Parameter(name: "unit_type", in: "query", required: false, schema: new OA\Schema(type: "integer")),
+            new OA\Parameter(name: "from_date", in: "query", required: false, schema: new OA\Schema(type: "string", format: "date")),
+            new OA\Parameter(name: "to_date", in: "query", required: false, schema: new OA\Schema(type: "string", format: "date")),
             new OA\Parameter(name: "per_page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 10)),
             new OA\Parameter(name: "page", in: "query", required: false, schema: new OA\Schema(type: "integer", default: 1)),
         ],
@@ -61,6 +64,22 @@ class SiteVisitController extends Controller
 
         if ($request->has('interest_status')) {
             $query->where('interest_status', $request->input('interest_status'));
+        }
+
+        if ($request->has('unit_type')) {
+            $unitType = $request->input('unit_type');
+            $query->where(function ($q) use ($unitType) {
+                $q->whereJsonContains('unit_type', (int) $unitType)
+                  ->orWhereJsonContains('unit_type', (string) $unitType);
+            });
+        }
+
+        if ($request->has('from_date') && $request->has('to_date')) {
+            $query->whereBetween('visit_date', [$request->input('from_date') . ' 00:00:00', $request->input('to_date') . ' 23:59:59']);
+        } elseif ($request->has('from_date')) {
+            $query->where('visit_date', '>=', $request->input('from_date') . ' 00:00:00');
+        } elseif ($request->has('to_date')) {
+            $query->where('visit_date', '<=', $request->input('to_date') . ' 23:59:59');
         }
 
         // if (!Auth::user()->hasRole('Super Admin') && !Auth::user()->hasRole('Admin')) {
