@@ -28,6 +28,8 @@ class Lead extends Model
         'assigned_to',
         'created_by',
         'type',
+        'remark',
+        'property_name'
     ];
 
     public function category()
